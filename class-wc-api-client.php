@@ -59,7 +59,7 @@ class WC_API_Client {
 	 * @param boolean $is_ssl          If the URL is secure or not, optional
 	 */
 	public function __construct( $consumer_key, $consumer_secret, $store_url, $is_ssl = false ) {
-		if ( isset( $consumer_key ) && isset( $consumer_secret ) && isset( $store_url ) ) {
+		if ( ! empty( $consumer_key ) && ! empty( $consumer_secret ) && ! empty( $store_url ) ) {
 			$this->_api_url = $store_url . self::API_ENDPOINT;
 			$this->set_consumer_key( $consumer_key );
 			$this->set_consumer_secret( $consumer_secret );
@@ -118,6 +118,25 @@ class WC_API_Client {
 	}
 
 	/**
+	 * Update the order, currently only status update suported by API
+	 * @param  integer $order_id
+	 * @param  array  $data
+	 * @return mixed|json string
+	 */
+	public function update_order( $order_id, $data = array() ) {
+		return $this->_make_api_call( 'orders/' . $order_id, $data, 'POST' );
+	}
+
+	/**
+	 * Delete the order, not suported in WC 2.1, scheduled for 2.2
+	 * @param  integer $order_id
+	 * @return mixed|json string
+	 */
+	public function delete_order( $order_id ) {
+		return $this->_make_api_call( 'orders/' . $order_id, $data = array(), 'DELETE' );
+	}
+
+	/**
 	 * Get all coupons
 	 * @param  integer [optional] $coupon_id
 	 * @return mixed|json string
@@ -152,7 +171,7 @@ class WC_API_Client {
 	 * @return mixed|json string
 	 */
 	public function get_coupon_by_code( $coupon_code ) {
-		return $this->_make_api_call( 'coupons/code/' . $coupon_code );
+		return $this->_make_api_call( 'coupons/code/' . rawurlencode( rawurldecode( $coupon_code ) ) );
 	}
 
 	/**
@@ -218,7 +237,7 @@ class WC_API_Client {
 	 * Get the total product count
 	 * @return mixed|json string
 	 */
-	public function get_product_count() {
+	public function get_products_count() {
 		return $this->_make_api_call( 'products/count' );
 	}
 
@@ -299,7 +318,7 @@ class WC_API_Client {
 		} else {
 			$params['oauth_consumer_key'] = $this->_consumer_key;
 			$params['oauth_timestamp'] = time();
-			$params['oauth_nonce'] = sha1( time() );
+			$params['oauth_nonce'] = sha1( microtime() );
 			$params['oauth_signature_method'] = 'HMAC-' . self::HASH_ALGORITHM;
 			$params['oauth_signature'] = $this->generate_oauth_signature( $params, $method, $endpoint );
 		}
@@ -315,7 +334,14 @@ class WC_API_Client {
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 30 );
         curl_setopt( $ch, CURLOPT_TIMEOUT, 30 );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+        if ( 'POST' === $method ) {
+			curl_setopt( $ch, CURLOPT_POST, true );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $params ) );
+    	} else if ( 'DELETE' === $method ) {
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+    	}
 
 		 $return = curl_exec( $ch );
 
