@@ -2,10 +2,12 @@ WooCommerce REST API Client Library
 ===================================
 
 ## About
+
 A PHP wrapper for the WooCommerce REST API. Easily interact with the WooCommerce REST API using this wrapper class.
 Feedback and bug reports are appreciated.
 
 ## Requirements
+
 PHP 5.2.x
 cURL
 WooCommerce 2.1 at least on the store
@@ -86,5 +88,6 @@ Generate API credentials ( Consumer Key & Consumer Secret ) on your profile page
 - Initial release
 
 ## Credit
+
 Copyright (c) 2013 - [Gerhard Potgieter](http://gerhardpotgieter.com/)
 Released under the [GPL3 license](http://www.gnu.org/licenses/gpl-3.0.html)
