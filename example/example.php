@@ -12,13 +12,12 @@ $store_url = 'http://localhost/demo/'; // Add the home URL to the store you want
 $wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
 
 // Get Index
-print_r( $wc_api->get_index() );
+//print_r( $wc_api->get_index() );
 
 // Get all orders
-//print_r( $wc_api->get_orders() );
+//print_r( $wc_api->get_orders( array( 'status' => 'completed' ) ) );
 
 // Get a single order by id
-//print_r( $wc_api->get_orders( 166 ) );
 //print_r( $wc_api->get_order( 166 ) );
 
 // Get orders count
@@ -34,7 +33,6 @@ print_r( $wc_api->get_index() );
 //print_r( $wc_api->get_coupons() );
 
 // Get coupon by id
-//print_r( $wc_api->get_coupons( 173 ) );
 //print_r( $wc_api->get_coupon( 173 ) );
 
 // Get coupon by code
@@ -47,7 +45,6 @@ print_r( $wc_api->get_index() );
 //print_r( $wc_api->get_customers() );
 
 // Get customer by id
-//print_r( $wc_api->get_customers( 2 ) );
 //print_r( $wc_api->get_customer( 2 ) );
 
 // Get customer count
@@ -60,7 +57,6 @@ print_r( $wc_api->get_index() );
 //print_r( $wc_api->get_products() );
 
 // Get a single product by id
-//print_r( $wc_api->get_products( 167 ) );
 //print_r( $wc_api->get_product( 167 ) );
 
 // Get products count
@@ -74,5 +70,8 @@ print_r( $wc_api->get_index() );
 
 // Get sales report
 //print_r( $wc_api->get_sales_report() );
+
+// Get top sellers report
+// print_r( $wc_api->get_top_sellers_report() );
 
 

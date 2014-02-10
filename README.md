@@ -49,7 +49,7 @@ Generate API credentials ( Consumer Key & Consumer Secret ) on your profile page
 
 ### Order methods
 - `get_orders()`
-- `get_orders( $order_id )`
+- `get_orders( $params = array( 'status' => 'completed' ) )`
 - `get_order( $order_id )`
 - `get_orders_count()`
 - `get_order_notes( $order_id )`
@@ -57,7 +57,6 @@ Generate API credentials ( Consumer Key & Consumer Secret ) on your profile page
 
 ### Coupon methods
 - `get_coupons()`
-- `get_coupons( $coupon_id)`
 - `get_coupon( $coupon_id )`
 - `get_coupon_by_code( $coupon_code )`
 - `get_coupons_count()`
@@ -65,29 +64,40 @@ Generate API credentials ( Consumer Key & Consumer Secret ) on your profile page
 
 ### Customer methods
 - `get_customers()`
-- `get_customers( $customer_id )`
+- `get_customers( $params = array( 'filter[created_at_min]' => '2013-12-01' ) )`
 - `get_customer( $customer_id )`
 - `get_customers_count()`
 - `get_customer_orders( $customer_id )`
 
 ### Product methods
 - `get_products()`
-- `get_products( $product_id )`
+- `get_products( $params = array( 'filter[created_at_min]' => '2013-12-01' ) )`
 - `get_product( $product_id )`
 - `get_products_count()`
 - `get_product_reviews( $product_id )`
 
 ### Report methods
 - `get_reports()`
-- `get_sales_report()`
+- `get_sales_report( $params = array( 'filter[start_date]' => '2013-12-01', 'filter[end_date]' => '2013-12-09' ) )`
+- `get_top_sellers_report( $params = array( 'filter[limit]' = '10' ) )`
+
+### Custom endpoints
+If you extended the WooCommerce API with your own endpoints you can use the following function to get access to that data
+- `make_custom_endpoint_call( $endpoint, $params = array(), $method = 'GET' )`
 
 ## Changelog
 
-**version 1.0 - 2013-12-10**
+**version 0.1 - 2013-12-10**
 
 - Initial release
 
+**version 0.2 - 2014-01-22**
+
+- Add support for filters/params to endpoint functions
+- Add new top sellers report endpoint function
+- Add function to call custom endpoints
+
 ## Credit
 
-Copyright (c) 2013 - [Gerhard Potgieter](http://gerhardpotgieter.com/)
+Copyright (c) 2013-2014 - [Gerhard Potgieter](http://gerhardpotgieter.com/)  
 Released under the [GPL3 license](http://www.gnu.org/licenses/gpl-3.0.html)

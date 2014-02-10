@@ -5,7 +5,7 @@
  * @author Gerhard Potgieter
  * @since 2013.12.05
  * @copyright Gerhard Potgieter
- * @version 1.0
+ * @version 0.2
  * @license GPL 3 or later http://www.gnu.org/licenses/gpl.html
  */
 
@@ -81,14 +81,11 @@ class WC_API_Client {
 
 	/**
 	 * Get all orders
-	 * @param  integer [optional] $order_id
+	 * @param  array  $params
 	 * @return mixed|jason string
 	 */
-	public function get_orders( $order_id = null ) {
-		if ( isset( $order_id ) )
-			$endpont = 'orders/' . $order_id;
-		else $endpont = 'orders';
-		return $this->_make_api_call( $endpont );
+	public function get_orders( $params = array() ) {
+		return $this->_make_api_call( 'orders', $params );
 	}
 
 	/**
@@ -138,14 +135,11 @@ class WC_API_Client {
 
 	/**
 	 * Get all coupons
-	 * @param  integer [optional] $coupon_id
+	 * @param  array  $params
 	 * @return mixed|json string
 	 */
-	public function get_coupons( $coupon_id = null ) {
-		if ( isset( $coupon_id ) )
-			$endpont = 'coupons/' . $coupon_id;
-		else $endpont = 'coupons';
-		return $this->_make_api_call( $endpont );
+	public function get_coupons( $params = array() ) {
+		return $this->_make_api_call( 'coupons', $params );
 	}
 
 	/**
@@ -176,14 +170,11 @@ class WC_API_Client {
 
 	/**
 	 * Get all customers
-	 * @param  integer [optional] $customer_id
+	 * @param  array  $params
 	 * @return mixed|json string
 	 */
-	public function get_customers( $customer_id = null ) {
-		if ( isset( $order_id ) )
-			$endpont = 'customers/' . $customer_id;
-		else $endpont = 'customers';
-		return $this->_make_api_call( $endpont );
+	public function get_customers( $params = array() ) {
+		return $this->_make_api_call( 'customers', $params );
 	}
 
 	/**
@@ -214,14 +205,11 @@ class WC_API_Client {
 
 	/**
 	 * Get all the products
-	 * @param  integer [optional] $product_id
+	 * @param  array  $params
 	 * @return mixed|json string
 	 */
-	public function get_products( $product_id = null ) {
-		if ( isset( $product_id ) )
-			$endpont = 'products/' . $product_id;
-		else $endpont = 'products';
-		return $this->_make_api_call( $endpont );
+	public function get_products( $params = array() ) {
+		return $this->_make_api_call( 'products', $params );
 	}
 
 	/**
@@ -252,18 +240,40 @@ class WC_API_Client {
 
 	/**
 	 * Get reports
+	 * @param  array  $params
 	 * @return mixed|json string
 	 */
-	public function get_reports() {
-		return $this->_make_api_call( 'reports' );
+	public function get_reports( $params = array() ) {
+		return $this->_make_api_call( 'reports', $params );
 	}
 
 	/**
 	 * Get the sales report
+	 * @param  array  $params
 	 * @return mixed|json string
 	 */
-	public function get_sales_report() {
-		return $this->_make_api_call( 'reports/sales' );
+	public function get_sales_report( $params = array() ) {
+		return $this->_make_api_call( 'reports/sales', $params );
+	}
+
+	/**
+	 * Get the top sellers report
+	 * @param  array  $params
+	 * @return mixed|json string
+	 */
+	public function get_top_sellers_report( $params = array() ) {
+		return $this->_make_api_call( 'reports/sales/top_sellers', $params );
+	}
+
+	/**
+	 * Run a custom endpoint call, for when you extended the API with your own endpoints
+	 * @param  string $endpoint
+	 * @param  array  $params
+	 * @param  string $method
+	 * @return mixed|json string
+	 */
+	public function make_custom_endpoint_call( $endpoint, $params = array(), $method = 'GET' ) {
+		$this->_make_api_call( $endpoint, $params, $method );
 	}
 
 	/**
@@ -340,7 +350,7 @@ class WC_API_Client {
 			curl_setopt( $ch, CURLOPT_POST, true );
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $params ) );
     	} else if ( 'DELETE' === $method ) {
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'DELETE' );
     	}
 
 		 $return = curl_exec( $ch );
