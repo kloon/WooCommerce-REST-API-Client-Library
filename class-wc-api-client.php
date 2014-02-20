@@ -5,7 +5,7 @@
  * @author Gerhard Potgieter
  * @since 2013.12.05
  * @copyright Gerhard Potgieter
- * @version 0.3
+ * @version 0.2
  * @license GPL 3 or later http://www.gnu.org/licenses/gpl.html
  */
 
@@ -366,11 +366,12 @@ class WC_API_Client {
 
 		$code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-		if ( 200 !== $code ) {
-			$return = '{"errors":[{"code":"' . $code . '","message":"cURL HTTP error ' . $code . '"}]}';
+		if ( $this->_return_as_object ) {
+			$return = json_decode( $return );
 		}
 
-		if ( $this->_return_as_object ) {
+		if ( empty( $return ) ) {
+			$return = '{"errors":[{"code":"' . $code . '","message":"cURL HTTP error ' . $code . '"}]}';
 			$return = json_decode( $return );
 		}
 		return $return;
