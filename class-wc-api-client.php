@@ -5,7 +5,7 @@
  * @author Gerhard Potgieter
  * @since 2013.12.05
  * @copyright Gerhard Potgieter
- * @version 0.2
+ * @version 0.3
  * @license GPL 3 or later http://www.gnu.org/licenses/gpl.html
  */
 
@@ -187,6 +187,15 @@ class WC_API_Client {
 	}
 
 	/**
+	 * Get a single customer by email
+	 * @param  string $email
+	 * @return mixed|json string
+	 */
+	public function get_customer_by_email( $email ) {
+		return $this->_make_api_call( 'customers/email/' . $email );
+	}
+
+	/**
 	 * Get the total customer count
 	 * @return mixed|json string
 	 */
@@ -353,12 +362,18 @@ class WC_API_Client {
 			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'DELETE' );
     	}
 
-		 $return = curl_exec( $ch );
+		$return = curl_exec( $ch );
 
-		 if ( $this->_return_as_object ) {
-		 	$return = json_decode( $return );
-		 }
-		 return $return;
+		$code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+		if ( 200 !== $code ) {
+			$return = '{"errors":[{"code":"' . $code . '","message":"cURL HTTP error ' . $code . '"}]}';
+		}
+
+		if ( $this->_return_as_object ) {
+			$return = json_decode( $return );
+		}
+		return $return;
 	}
 
 	/**

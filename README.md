@@ -87,15 +87,19 @@ If you extended the WooCommerce API with your own endpoints you can use the foll
 
 ## Changelog
 
-**version 0.1 - 2013-12-10**
+**version 0.3 - 2014-02-20**
 
-- Initial release
+- Add HTTP error messages on failed cURL calls
 
 **version 0.2 - 2014-01-22**
 
 - Add support for filters/params to endpoint functions
 - Add new top sellers report endpoint function
 - Add function to call custom endpoints
+
+**version 0.1 - 2013-12-10**
+
+- Initial release
 
 ## Credit
 
