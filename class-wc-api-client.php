@@ -5,7 +5,7 @@
  * @author Gerhard Potgieter
  * @since 2013.12.05
  * @copyright Gerhard Potgieter
- * @version 0.2
+ * @version 0.3
  * @license GPL 3 or later http://www.gnu.org/licenses/gpl.html
  */
 
