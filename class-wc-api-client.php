@@ -5,7 +5,7 @@
  * @author Gerhard Potgieter
  * @since 2013.12.05
  * @copyright Gerhard Potgieter
- * @version 0.3
+ * @version 0.3.1
  * @license GPL 3 or later http://www.gnu.org/licenses/gpl.html
  */
 
@@ -388,7 +388,7 @@ class WC_API_Client {
 		$base_request_uri = rawurlencode( $this->_api_url . $endpoint );
 
 		// normalize parameter key/values and sort them
-		array_walk( $params, array( $this, 'normalize_parameters' ) );
+		$params = $this->normalize_parameters( $params );
 		uksort( $params, 'strcmp' );
 
 		// form query string
@@ -406,14 +406,39 @@ class WC_API_Client {
 	}
 
 	/**
-	 * Normalize the paramaters
-	 * @param  string $key
-	 * @param  string $value
-	 * @return void
+	 * Normalize each parameter by assuming each parameter may have already been
+	 * encoded, so attempt to decode, and then re-encode according to RFC 3986
+	 *
+	 * Note both the key and value is normalized so a filter param like:
+	 *
+	 * 'filter[period]' => 'week'
+	 *
+	 * is encoded to:
+	 *
+	 * 'filter%5Bperiod%5D' => 'week'
+	 *
+	 * This conforms to the OAuth 1.0a spec which indicates the entire query string
+	 * should be URL encoded
+	 *
+	 * @since 0.3.1
+	 * @see rawurlencode()
+	 * @param array $parameters un-normalized pararmeters
+	 * @return array normalized parameters
 	 */
-	private function normalize_parameters( &$key, &$value ) {
-		$key = rawurlencode( rawurldecode( $key ) );
-		$value = rawurlencode( rawurldecode( $value ) );
+	private function normalize_parameters( $parameters ) {
+
+		$normalized_parameters = array();
+
+		foreach ( $parameters as $key => $value ) {
+
+			// percent symbols (%) must be double-encoded
+			$key   = str_replace( '%', '%25', rawurlencode( rawurldecode( $key ) ) );
+			$value = str_replace( '%', '%25', rawurlencode( rawurldecode( $value ) ) );
+
+			$normalized_parameters[ $key ] = $value;
+		}
+
+		return $normalized_parameters;
 	}
+
 }
-?>
