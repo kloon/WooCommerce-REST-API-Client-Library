@@ -87,6 +87,10 @@ If you extended the WooCommerce API with your own endpoints you can use the foll
 
 ## Changelog
 
+**version 0.3.1 - 2014-05-02**
+
+- Fix parameter normalization issue with WC 2.1.7+
+
 **version 0.3 - 2014-02-20**
 
 - Add HTTP error messages on failed cURL calls
@@ -103,5 +107,5 @@ If you extended the WooCommerce API with your own endpoints you can use the foll
 
 ## Credit
 
-Copyright (c) 2013-2014 - [Gerhard Potgieter](http://gerhardpotgieter.com/)  
+Copyright (c) 2013-2014 - [Gerhard Potgieter](http://gerhardpotgieter.com/)
 Released under the [GPL3 license](http://www.gnu.org/licenses/gpl-3.0.html)
