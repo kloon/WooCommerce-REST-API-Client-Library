@@ -1,5 +1,5 @@
 {
-    "name": "Woocommerce Rest API client",
+    "name": "jacoor/woocommerce-rest-api-client-library",
     "description": "Woocommerce Rest API client",
     "homepage": "https://github.com/kloon/WooCommerce-REST-API-Client-Library",
     "authors": [
