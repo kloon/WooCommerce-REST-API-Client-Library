@@ -60,7 +60,7 @@ class WC_API_Client {
 	 */
 	public function __construct( $consumer_key, $consumer_secret, $store_url, $is_ssl = false ) {
 		if ( ! empty( $consumer_key ) && ! empty( $consumer_secret ) && ! empty( $store_url ) ) {
-			$this->_api_url = $store_url . self::API_ENDPOINT;
+			$this->_api_url = (  rtrim($store_url,'/' ) . '/' ) . self::API_ENDPOINT;
 			$this->set_consumer_key( $consumer_key );
 			$this->set_consumer_secret( $consumer_secret );
 			$this->set_is_ssl( $is_ssl );
