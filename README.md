@@ -54,6 +54,7 @@ Generate API credentials ( Consumer Key & Consumer Secret ) on your profile page
 - `get_orders_count()`
 - `get_order_notes( $order_id )`
 - `update_order( $order_id, $data = array( 'status' => 'processing' ) )`
+- `update_order( $order_id, $data = array( 'status' => 'processing', 'note' => 'This is a note') )`
 
 ### Coupon methods
 - `get_coupons()`
