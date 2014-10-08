@@ -282,7 +282,7 @@ class WC_API_Client {
 	 * @return mixed|json string
 	 */
 	public function make_custom_endpoint_call( $endpoint, $params = array(), $method = 'GET' ) {
-		$this->_make_api_call( $endpoint, $params, $method );
+		return $this->_make_api_call( $endpoint, $params, $method );
 	}
 
 	/**
