@@ -14,7 +14,7 @@ class WC_API_Client {
 	/**
 	 * API base endpoint
 	 */
-	const API_ENDPOINT = 'wc-api/v1/';
+	const API_ENDPOINT = 'wc-api/v2/';
 
 	/**
 	 * The HASH alorithm to use for oAuth signature, SHA256 or SHA1
@@ -52,18 +52,35 @@ class WC_API_Client {
 	private $_return_as_object = true;
 
 	/**
-	 * Default contructor
-	 * @param string  $consumer_key    The consumer key
-	 * @param string  $consumer_secret The consumer secret
-	 * @param string  $store_url       The URL to the WooCommerce store
-	 * @param boolean $is_ssl          If the URL is secure or not, optional
+	 * Configurable timeout
+	 * @var integer
 	 */
-	public function __construct( $consumer_key, $consumer_secret, $store_url, $is_ssl = false ) {
+	private $_api_call_timeout;
+
+	/**
+	 * Return whether or not to show curls output in verbose mode
+	 * @var boolean
+	 */
+	private $_curl_debug;
+
+	/**
+	 * Default contructor
+	 * @param string  $consumer_key    			The consumer key
+	 * @param string  $consumer_secret 			The consumer secret
+	 * @param string  $store_url      	 		The URL to the WooCommerce store
+	 * @param boolean $is_ssl          			If the URL is secure or not, optional
+	 * @param integer $api_call_timeout     Custom duration for timeouts, optional
+	 * @param boolean $curl_debug          	Show curl output in verbose mode, optional
+	 */
+	public function __construct( $consumer_key, $consumer_secret, $store_url, $is_ssl = false, $api_call_timeout = 30, $curl_debug = false) {
 		if ( ! empty( $consumer_key ) && ! empty( $consumer_secret ) && ! empty( $store_url ) ) {
 			$this->_api_url = (  rtrim($store_url,'/' ) . '/' ) . self::API_ENDPOINT;
 			$this->set_consumer_key( $consumer_key );
 			$this->set_consumer_secret( $consumer_secret );
 			$this->set_is_ssl( $is_ssl );
+			$this->set_api_call_timeout( $api_call_timeout );
+			$this->set_curl_debug( $curl_debug );
+
 		} else if ( ! isset( $consumer_key ) && ! isset( $consumer_secret ) ) {
 			throw new Exception( 'Error: __construct() - Consumer Key / Consumer Secret missing.' );
 		} else {
@@ -117,11 +134,27 @@ class WC_API_Client {
 	/**
 	 * Update the order, currently only status update suported by API
 	 * @param  integer $order_id
+	 * @param  string  $data
+	 * @return mixed|json string
+	 */
+	public function update_order_notes( $order_id, $data = "" ) {	
+		$noteObject = array();
+		$noteObject['note'] = $data;
+		$noteObject['customer_note'] = true;
+		$requestObject = array();
+		$requestObject['order_note'] = $noteObject;
+
+		return $this->_make_api_call( 'orders/' . $order_id . '/notes', $requestObject, 'POST' );
+	}
+
+	/**
+	 * Update the order, currently only status update suported by API
+	 * @param  integer $order_id
 	 * @param  array  $data
 	 * @return mixed|json string
 	 */
 	public function update_order( $order_id, $data = array() ) {
-		return $this->_make_api_call( 'orders/' . $order_id, $data, 'POST' );
+		return $this->_make_api_call( 'orders/' . $order_id, array('order' => $data), 'POST' );
 	}
 
 	/**
@@ -322,6 +355,22 @@ class WC_API_Client {
 	}
 
 	/**
+	 * Set the timeout 
+	 * @param string $api_call_timeout
+	 */
+	public function set_api_call_timeout( $api_call_timeout ) {
+		$this->_api_call_timeout = $api_call_timeout;
+	}
+
+	/**
+	 * Set the whether or not to show verbose curl output 
+	 * @param boolean $curl_debug
+	 */
+	public function set_curl_debug( $curl_debug ) {
+		$this->_curl_debug = $curl_debug;
+	}
+
+	/**
 	 * Make the call to the API
 	 * @param  string $endpoint
 	 * @param  array  $params
@@ -351,16 +400,18 @@ class WC_API_Client {
 		// Set up the enpoint URL
 		curl_setopt( $ch, CURLOPT_URL, $this->_api_url . $endpoint . $paramString );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 30 );
-        curl_setopt( $ch, CURLOPT_TIMEOUT, 30 );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
+		curl_setopt( $ch, CURLOPT_VERBOSE, $this->_curl_debug );					
+		curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, $this->_api_call_timeout );
+    curl_setopt( $ch, CURLOPT_TIMEOUT, $this->_api_call_timeout );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
-        if ( 'POST' === $method ) {
+    if ( 'POST' === $method ) {
 			curl_setopt( $ch, CURLOPT_POST, true );
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $params ) );
-    	} else if ( 'DELETE' === $method ) {
+   	} else if ( 'DELETE' === $method ) {
 			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'DELETE' );
-    	}
+    }
 
 		$return = curl_exec( $ch );
 
