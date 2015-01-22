@@ -52,6 +52,12 @@ class WC_API_Client {
 	private $_return_as_object = true;
 
 	/**
+	 * The status code from the most recent api call
+	 * @var int
+	 */
+	private $_status_code = 0;
+
+	/**
 	 * Default contructor
 	 * @param string  $consumer_key    The consumer key
 	 * @param string  $consumer_secret The consumer secret
@@ -364,17 +370,25 @@ class WC_API_Client {
 
 		$return = curl_exec( $ch );
 
-		$code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$this->_status_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
 		if ( $this->_return_as_object ) {
 			$return = json_decode( $return );
 		}
 
 		if ( empty( $return ) ) {
-			$return = '{"errors":[{"code":"' . $code . '","message":"cURL HTTP error ' . $code . '"}]}';
+			$return = '{"errors":[{"code":"' . $this->_status_code . '","message":"cURL HTTP error ' . $this->_status_code . '"}]}';
 			$return = json_decode( $return );
 		}
 		return $return;
+	}
+
+	/**
+	 * Status code from the most recent api call
+	 * @return int
+	 */
+	public function getLastStatusCode() {
+		return $this->_status_code;
 	}
 
 	/**
