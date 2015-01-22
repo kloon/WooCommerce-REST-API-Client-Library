@@ -378,6 +378,7 @@ class WC_API_Client {
 
 		if ( empty( $return ) ) {
 			$return = '{"errors":[{"code":"' . $this->_status_code . '","message":"cURL HTTP error ' . $this->_status_code . '"}]}';
+			$return = json_decode( $return );
 		}
 		return $return;
 	}
