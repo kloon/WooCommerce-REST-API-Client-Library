@@ -14,7 +14,7 @@ class WC_API_Client {
 	/**
 	 * API base endpoint
 	 */
-	const API_ENDPOINT = 'wc-api/v1/';
+	const API_ENDPOINT = 'wc-api/v2/';
 
 	/**
 	 * The HASH alorithm to use for oAuth signature, SHA256 or SHA1
@@ -248,6 +248,27 @@ class WC_API_Client {
 	}
 
 	/**
+	* Update a product by id
+	* @param int $product_id
+	* @param array $data
+	* @param string $method
+	* @return mixed|json string
+	*/
+    	public function update_product($product_id, $data, $method = "PUT") {
+        	return $this->_make_api_call('products/' . $product_id, ['product' => $data], $method);
+	}
+
+       /**
+	* Create a product         
+     	* @param array $data
+     	* @param string $method
+     	* @return mixed|json string
+     	*/
+    	public function create_product($data, $method = "POST") {
+        	return $this->_make_api_call('products/', ['product' => $data], $method);
+    	}
+
+	/**
 	 * Get reports
 	 * @param  array  $params
 	 * @return mixed|json string
@@ -352,15 +373,22 @@ class WC_API_Client {
 		curl_setopt( $ch, CURLOPT_URL, $this->_api_url . $endpoint . $paramString );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 30 );
-        curl_setopt( $ch, CURLOPT_TIMEOUT, 30 );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+	        curl_setopt( $ch, CURLOPT_TIMEOUT, 30 );
+        	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
-        if ( 'POST' === $method ) {
-			curl_setopt( $ch, CURLOPT_POST, true );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $params ) );
-    	} else if ( 'DELETE' === $method ) {
-			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'DELETE' );
-    	}
+	        switch ($method) {
+	            case 'POST':
+	                curl_setopt($ch, CURLOPT_POST, true);
+	                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+	                break;
+	            case 'DELETE':
+	                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+	                break;
+	            case 'PUT':
+	                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+	                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+	                break;
+	        }
 
 		$return = curl_exec( $ch );
 
