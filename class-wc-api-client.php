@@ -14,7 +14,7 @@ class WC_API_Client {
 	/**
 	 * API base endpoint
 	 */
-	const API_ENDPOINT = 'wc-api/v1/';
+	const API_ENDPOINT = 'wc-api/v2/';
 
 	/**
 	 * The HASH alorithm to use for oAuth signature, SHA256 or SHA1
