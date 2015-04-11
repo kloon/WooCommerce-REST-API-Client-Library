@@ -333,7 +333,8 @@ class WC_API_Client {
 
 		// Check if we must use Basic Auth or 1 legged oAuth, if SSL we use basic, if not we use OAuth 1.0a one-legged
 		if ( $this->_is_ssl ) {
-			curl_setopt( $ch, CURLOPT_USERPWD, $this->_consumer_key . ":" . $this->_consumer_secret );
+			$params['consumer_key'] = $this->_consumer_key;
+			$params['consumer_secret'] = $this->_consumer_secret;
 		} else {
 			$params['oauth_consumer_key'] = $this->_consumer_key;
 			$params['oauth_timestamp'] = time();
