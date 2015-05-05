@@ -38,5 +38,5 @@ require_once( $dir . '/resources/class-wc-api-client-resource-orders.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-order-notes.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-order-refunds.php' );
 //require_once( $dir . '/resources/class-wc-api-client-resource-products.php' );
-//require_once( $dir . '/resources/class-wc-api-client-resource-reports.php' );
+require_once( $dir . '/resources/class-wc-api-client-resource-reports.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-webhooks.php' );
