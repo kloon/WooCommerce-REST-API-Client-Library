@@ -76,7 +76,7 @@ class WC_API_Client_Authentication {
 	 */
 	public function generate_oauth_signature( $params, $http_method ) {
 
-		$base_request_uri = rawurlencode( $this->url );
+		$base_request_uri = rawurlencode( rtrim( $this->url, '/' ) );
 
 		// normalize parameter key/values and sort them
 		$params = $this->normalize_parameters( $params );
