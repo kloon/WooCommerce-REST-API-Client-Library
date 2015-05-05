@@ -29,7 +29,7 @@ $options = array(
 try {
 
 	$client = new WC_API_Client( 'http://your-store-url.com', $consumer_key, $consumer_secret, $options );
-	
+
 } catch ( WC_API_Client_Exception $e ) {
 
 	echo $e->getMessage() . PHP_EOL;
@@ -37,22 +37,11 @@ try {
 
 	if ( $e instanceof WC_API_Client_HTTP_Exception ) {
 
-<<<<<<< HEAD
-### Order methods
-- `get_orders()`
-- `get_orders( $params = array( 'status' => 'completed' ) )`
-- `get_order( $order_id )`
-- `get_orders_count()`
-- `get_order_notes( $order_id )`
-- `update_order( $order_id, $data = array( 'status' => 'processing' ) )`
-- `update_order( $order_id, $data = array( 'status' => 'processing', 'note' => 'This is a note') )`
-=======
 		print_r( $e->get_request() );
 		print_r( $e->get_response() );
 	}
 }
 ```
->>>>>>> v2-rewrite
 
 ### Options
 
