@@ -205,7 +205,8 @@ class WC_API_Client {
 	 */
 	public function make_api_call( $method, $path, $data ) {
 
-		$endpoint = $this->api_url . $path;
+		// trailing slashes tend to cause OAuth authentication issues, so strip them
+		$endpoint = rtrim( $this->api_url . $path, '/' );
 
 		$auth = new WC_API_Client_Authentication( $endpoint, $this->consumer_key, $this->consumer_secret );
 
@@ -225,7 +226,11 @@ class WC_API_Client {
 			$http->headers  = $response['headers'];
 			$http->duration = $response['duration'];
 
-			$this->return_as_array ? $data['http'] = (array) $http : $data->http = $http;
+			if ( $this->return_as_array ) {
+				$data['http'] = (array) $http;
+			} else {
+				$data->http = $http;
+			}
 		}
 
 		return $data;
