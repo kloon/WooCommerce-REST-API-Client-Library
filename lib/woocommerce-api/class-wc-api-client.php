@@ -39,6 +39,15 @@ class WC_API_Client {
 
 	/** Resources */
 
+	/** @var WC_API_Client_Resource_Coupons instance */
+	public $coupons;
+
+	/** @var WC_API_Client_Resource_Custom instance */
+	public $custom;
+
+	/** @var WC_API_Client_Resource_Customers instance */
+	public $customers;
+
 	/** @var WC_API_Client_Resource_Index instance */
 	public $index;
 
@@ -48,11 +57,17 @@ class WC_API_Client {
 	/** @var WC_API_Client_Resource_Order_Notes instance */
 	public $order_notes;
 
+	/** @var WC_API_Client_Resource_Order_Refunds instance */
+	public $order_refunds;
+
+	/** @var WC_API_Client_Resource_Products instance */
+	public $products;
+
+	/** @var WC_API_Client_Resource_Reports instance */
+	public $reports;
+
 	/** @var WC_API_Client_Resource_Webhooks instance */
 	public $webhooks;
-
-	/** @var WC_API_Client_Resource_Custom instance */
-	public $custom;
 
 
 	/**
@@ -94,16 +109,23 @@ class WC_API_Client {
 	public function init_resources() {
 
 		$resources = array(
-			'WC_API_Client_Resource_Index'       => 'index',
-			'WC_API_Client_Resource_Orders'      => 'orders',
-			'WC_API_Client_Resource_Order_Notes' => 'order_notes',
-			'WC_API_Client_Resource_Webhooks'    => 'webhooks',
-			'WC_API_Client_Resource_Custom'      => 'custom',
+			'WC_API_Client_Resource_Coupons'       => 'coupons',
+			'WC_API_Client_Resource_Custom'        => 'custom',
+			'WC_API_Client_Resource_Customers'     => 'customers',
+			'WC_API_Client_Resource_Index'         => 'index',
+			'WC_API_Client_Resource_Orders'        => 'orders',
+			'WC_API_Client_Resource_Order_Notes'   => 'order_notes',
+			'WC_API_Client_Resource_Order_Refunds' => 'order_refunds',
+			'WC_API_Client_Resource_Products'      => 'products',
+			'WC_API_Client_Resource_Reports'       => 'reports',
+			'WC_API_Client_Resource_Webhooks'      => 'webhooks',
 		);
 
 		foreach ( $resources as $resource_class => $resource_method ) {
 
-			$this->$resource_method = new $resource_class( $this );
+			if ( class_exists( $resource_class ) ) {
+				$this->$resource_method = new $resource_class( $this );
+			}
 		}
 	}
 
