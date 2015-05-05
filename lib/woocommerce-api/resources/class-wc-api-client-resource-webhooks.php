@@ -4,7 +4,7 @@
  *
  * @since 2.0
  */
-class WC_API_Client_Webhooks extends WC_API_Client_Resource {
+class WC_API_Client_Resource_Webhooks extends WC_API_Client_Resource {
 
 
 	/**

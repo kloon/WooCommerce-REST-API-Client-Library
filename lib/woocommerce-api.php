@@ -30,7 +30,7 @@ require_once( $dir . '/exceptions/class-wc-api-client-http-exception.php' );
 
 // resources
 require_once( $dir . '/resources/class-wc-api-client-resource.php' );
-require_once( $dir . '/resources/class-wc-api-client-index.php' );
-require_once( $dir . '/resources/class-wc-api-client-orders.php' );
-require_once( $dir . '/resources/class-wc-api-client-order-notes.php' );
-require_once( $dir . '/resources/class-wc-api-client-webhooks.php' );
+require_once( $dir . '/resources/class-wc-api-client-resource-index.php' );
+require_once( $dir . '/resources/class-wc-api-client-resource-orders.php' );
+require_once( $dir . '/resources/class-wc-api-client-resource-order-notes.php' );
+require_once( $dir . '/resources/class-wc-api-client-resource-webhooks.php' );

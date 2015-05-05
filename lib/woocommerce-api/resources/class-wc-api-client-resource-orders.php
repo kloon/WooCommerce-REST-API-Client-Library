@@ -4,7 +4,7 @@
  *
  * @since 2.0
  */
-class WC_API_Client_Orders extends WC_API_Client_Resource {
+class WC_API_Client_Resource_Orders extends WC_API_Client_Resource {
 
 
 	/**

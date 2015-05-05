@@ -39,16 +39,16 @@ class WC_API_Client {
 
 	/** Resources */
 
-	/** @var WC_API_Client_Index instance */
+	/** @var WC_API_Client_Resource_Index instance */
 	public $index;
 
-	/** @var WC_API_Client_Orders instance */
+	/** @var WC_API_Client_Resource_Orders instance */
 	public $orders;
 
-	/** @var WC_API_Client_Order_Notes instance */
+	/** @var WC_API_Client_Resource_Order_Notes instance */
 	public $order_notes;
 
-	/** @var WC_API_Client_Webhooks instance */
+	/** @var WC_API_Client_Resource_Webhooks instance */
 	public $webhooks;
 
 
@@ -91,10 +91,10 @@ class WC_API_Client {
 	public function init_resources() {
 
 		$resources = array(
-			'WC_API_Client_Index'       => 'index',
-			'WC_API_Client_Orders'      => 'orders',
-			'WC_API_Client_Order_Notes' => 'order_notes',
-			'WC_API_Client_Webhooks'    => 'webhooks',
+			'WC_API_Client_Resource_Index'       => 'index',
+			'WC_API_Client_Resource_Orders'      => 'orders',
+			'WC_API_Client_Resource_Order_Notes' => 'order_notes',
+			'WC_API_Client_Resource_Webhooks'    => 'webhooks',
 		);
 
 		foreach ( $resources as $resource_class => $resource_method ) {
