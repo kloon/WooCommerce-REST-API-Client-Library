@@ -28,6 +28,14 @@ class WC_API_Client {
 	/** @var bool perform validation on the API URL */
 	public $validate_url = false;
 
+	/** @var int HTTP request timeout */
+	public $timeout = 30;
+
+	/** @var bool true to perform SSL peer verification */
+	public $ssl_verify = true;
+
+	/** @var WC_API_Client_Orders instance */
+	public $orders;
 	/** API client version */
 	const VERSION = '2.0.0';
 
@@ -138,6 +146,7 @@ class WC_API_Client {
 			'return_as_array',
 			'validate_url',
 			'timeout',
+			'ssl_verify',
 		);
 
 		foreach ( (array) $options as $opt_key => $opt_value ) {
@@ -171,7 +180,7 @@ class WC_API_Client {
 		}
 
 		// older versions of WC (2.0 and under) will simply return a "1"
-		if ( "1" === $index ) {
+		if ( '1' === $index ) {
 			throw new WC_API_Client_Exception( sprintf( 'Please upgrade the WooCommerce version on %s to v2.2 or greater.', $this->api_url ) );
 		}
 
@@ -199,37 +208,41 @@ class WC_API_Client {
 	 * @since 2.0
 	 * @param string $method HTTP method, e.g. GET
 	 * @param string $path request path, e.g. orders/123
-	 * @param array $data request data, either query parameters or the request body
+	 * @param array $request_data either query parameters or the request body
 	 * @return object|array object by default
 	 * @throws WC_API_Client_Exception HTTP or authentication errors
 	 */
-	public function make_api_call( $method, $path, $data ) {
+	public function make_api_call( $method, $path, $request_data) {
 
-		// trailing slashes tend to cause OAuth authentication issues, so strip them
-		$endpoint = rtrim( $this->api_url . $path, '/' );
+		$args = array(
+			'method'          => $method,
+			'url'             => $this->api_url . $path,
+			'data'            => $request_data,
+			'consumer_key'    => $this->consumer_key,
+			'consumer_secret' => $this->consumer_secret,
+			'options'         => array(
+				'timeout'    => $this->timeout,
+				'ssl_verify' => $this->ssl_verify,
+			)
+		);
 
-		$auth = new WC_API_Client_Authentication( $endpoint, $this->consumer_key, $this->consumer_secret );
+		$request = new WC_API_Client_HTTP_Request( $args );
 
-		$request = new WC_API_Client_HTTP_Request( $method, $endpoint, $data, $auth );
+		$result = $request->dispatch();
 
-		$response = $request->dispatch();
+		$parsed_response = json_decode( $result['response']->body, $this->return_as_array );
 
-		$parsed_response = json_decode( $response['body'], $this->return_as_array );
-
-		// add HTTP info to object
 		if ( $this->verbose_mode ) {
 
-			$http           = new stdClass();
-			$http->url      = $response['url'];
-			$http->body     = $response['body'];
-			$http->code     = $response['code'];
-			$http->headers  = $response['headers'];
-			$http->duration = $response['duration'];
-
+			// add HTTP request/response info
 			if ( $this->return_as_array ) {
-				$parsed_response['http'] = (array) $http;
+
+				// hack to recursively convert object to assoc array ¯\_(ツ)_/¯
+				$parsed_response['http'] = json_decode( json_encode( $result ), true );
+
 			} else {
-				$parsed_response->http = $http;
+
+				$parsed_response->http = $result;
 			}
 		}
 

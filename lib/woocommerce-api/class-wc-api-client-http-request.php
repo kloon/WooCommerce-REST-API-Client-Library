@@ -12,17 +12,11 @@ class WC_API_Client_HTTP_Request {
 	/** @var resource cURL handle */
 	protected $ch;
 
-	/** @var string request method, e.g. GET */
-	protected $method;
+	/** @var stdClass request data */
+	protected $request;
 
-	/** @var string request URL */
-	protected $url;
-
-	/** @var array query string parameters */
-	protected $params = array();
-
-	/** @var array */
-	protected $body;
+	/** @var stdClass response data */
+	protected $response;
 
 	/** @var string raw HTTP response headers */
 	protected $curl_headers;
@@ -32,64 +26,78 @@ class WC_API_Client_HTTP_Request {
 	 * Setup HTTP request
 	 *
 	 * @since 2.0
-	 * @param string $method HTTP request method, e.g. GET
-	 * @param string $url endpoint URL, e.g. http://www.woothemes,com/wc-api/v2/orders/123
-	 * @param array $data query parameters or request body, depending on HTTP method
-	 * @param WC_API_Client_Authentication $auth class instance
+	 * @param array $args request args
 	 */
-	public function __construct( $method, $url, $data, $auth ) {
+	public function __construct( $args ) {
 
-		$this->method = $method;
-		$this->ch = curl_init();
+		$this->request = new stdClass();
 
-		// default cURL opts
-		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, false );
-		curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, 30 );
-		curl_setopt( $this->ch, CURLOPT_TIMEOUT, 30 );
-		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
-
-		// set request headers
-		curl_setopt( $this->ch, CURLOPT_HTTPHEADER, array(
+		$this->request->headers = array(
 			'Accept: application/json',
 			'Content-Type: application/json',
 			'User-Agent: WooCommerce API Client-PHP/' . WC_API_Client::VERSION,
-		) );
+		);
+
+		// GET, POST, PUT, DELETE, etc.
+		$this->request->method = $args['method'];
+
+		// trailing slashes tend to cause OAuth authentication issues, so strip them
+		$this->request->url = rtrim( $args['url'], '/' );
+
+		$this->request->params = array();
+		$this->request->data = $args['data'];
+
+		// optional cURL opts
+		$timeout = (int) $args['options']['timeout'];
+		$ssl_verify = (bool) $args['options']['ssl_verify'];
+
+		$this->ch = curl_init();
+
+		// default cURL opts
+		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, $ssl_verify );
+		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, $ssl_verify );
+		curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+		curl_setopt( $this->ch, CURLOPT_TIMEOUT, (int) $timeout );
+		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
+
+		// set request headers
+		curl_setopt( $this->ch, CURLOPT_HTTPHEADER, $this->request->headers );
 
 		// save response headers
 		curl_setopt( $this->ch, CURLOPT_HEADERFUNCTION, array( $this, 'curl_stream_headers' ) );
 
 		// set request method and data
-		switch ( $method ) {
+		switch ( $this->request->method ) {
 
 			case 'GET':
-				$this->params = (array) $data;
+				$this->request->body = null;
+				$this->request->params = (array) $this->request->data;
 			break;
 
 			case 'PUT':
+				$this->request->body = json_encode( $this->request->data );
 				curl_setopt( $this->ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
-				curl_setopt( $this->ch, CURLOPT_POSTFIELDS, json_encode( $data ) );
+				curl_setopt( $this->ch, CURLOPT_POSTFIELDS, $this->request->body );
 			break;
 
 			case 'POST':
+				$this->request->body = json_encode( $this->request->data );
 				curl_setopt( $this->ch, CURLOPT_POST, true );
-				curl_setopt( $this->ch, CURLOPT_POSTFIELDS, json_encode( $data ) );
+				curl_setopt( $this->ch, CURLOPT_POSTFIELDS, $this->request->body );
 			break;
 
 			case 'DELETE':
-				$this->params = (array) $data;
+				$this->request->body = null;
+				$this->request->params = (array) $this->request->data;
 				curl_setopt( $this->ch, CURLOPT_CUSTOMREQUEST, 'DELETE' );
 				break;
 		}
 
-		// set authentication
-		$this->setup_auth( $auth );
-
-		// build url
-		$this->url = $url . ( ! empty( $this->params ) ? '?' . http_build_query( $this->params ) : '' );
+		// auth
+		$this->request->url = $this->get_url_with_auth( $args['consumer_key'], $args['consumer_secret'] );
 
 		// set request url
-		curl_setopt( $this->ch, CURLOPT_URL, $this->url );
+		curl_setopt( $this->ch, CURLOPT_URL, $this->request->url );
 	}
 
 
@@ -97,23 +105,30 @@ class WC_API_Client_HTTP_Request {
 	 * Set authentication parameters for the request
 	 *
 	 * @since 2.0
-	 * @param $auth WC_API_Client_Authentication class instance
+	 * @param string $consumer_key API consumer key
+	 * @param string $consumer_secret API consumer secret
+	 * @return string request URL with authentication parameters added
 	 */
-	protected function setup_auth( $auth ) {
+	protected function get_url_with_auth( $consumer_key, $consumer_secret ) {
+
+		$auth = new WC_API_Client_Authentication( $this->request->url, $consumer_key, $consumer_secret );
 
 		if ( $auth->is_ssl() ) {
 
 			// query string authentication over SSL works with all servers, whereas HTTP basic auth fails in certain cases
 			// see https://github.com/kloon/WooCommerce-REST-API-Client-Library/issues/29
-			$this->params = array_merge( $this->params, array(
+			$this->request->params = array_merge( $this->request->params, array(
 				'consumer_key'    => $auth->get_consumer_key(),
 				'consumer_secret' => $auth->get_consumer_secret(),
 			) );
 
 		} else {
 
-			$this->params = array_merge( $this->params, $auth->get_oauth_params( $this->params, $this->method ) );
+			$this->request->params = array_merge( $this->request->params, $auth->get_oauth_params( $this->request->params, $this->request->method ) );
 		}
+
+		// build url
+		return $this->request->url . ( ! empty( $this->request->params ) ? '?' . http_build_query( $this->request->params ) : '' );
 	}
 
 
@@ -123,56 +138,68 @@ class WC_API_Client_HTTP_Request {
 	 * @since 2.0
 	 * @return array in format:
 	 * {
-	 *   'body' => raw response body
-	 *   'code' => HTTP response code
-	 *   'headers' => HTTP response headers in assoc array
-	 *   'duration' => request duration, in seconds
+	 *   'request' => stdClass(
+	 *     'url' => request URL
+	 *     'method' => request method
+	 *     'body' => JSON encoded request body entity
+	 *     'headers' => array of request headers
+	 *     'duration' => request duration, in seconds
+	 *     'params' => optional raw params
+	 *     'data' => optional raw request data
+	 *     'duration' =>
+	 *    )
+	 *   'response' => stdClass(
+	 *     'body' => raw response body
+	 *     'code' => HTTP response code
+	 *     'headers' => HTTP response headers in assoc array
+	 *   )
 	 * }
-	 * @throws WC_API_Client_Exception any non HTTP 200/201 response
+	 * @throws WC_API_Client_HTTP_Exception invalid decoded JSON or any non-HTTP 200/201 response
 	 */
 	public function dispatch() {
+
+		$this->response = new stdClass();
 
 		// blank headers
 		$this->curl_headers = '';
 
 		$start_time = microtime( true );
 
-		// send request
-		$response_body = curl_exec( $this->ch );
+		// send request + save raw response body
+		$this->response->body = curl_exec( $this->ch );
 
-		$duration = round( microtime( true ) - $start_time, 5 );
+		// request duration
+		$this->request->duration = round( microtime( true ) - $start_time, 5 );
 
-		// save response code
-		$response_code = curl_getinfo( $this->ch, CURLINFO_HTTP_CODE );
+		// response code
+		$this->response->code = curl_getinfo( $this->ch, CURLINFO_HTTP_CODE );
+
+		// response headers
+		$this->response->headers = $this->get_response_headers();
 
 		curl_close( $this->ch );
 
-		$parsed_response = json_decode( $response_body );
-
-		$response = array(
-			'url'      => $this->url,
-			'body'     => $response_body,
-			'code'     => $response_code,
-			'headers'  => $this->get_response_headers(),
-			'duration' => $duration,
-		);
+		$parsed_response = json_decode( $this->response->body );
 
 		// check for invalid JSON
 		if ( null === $parsed_response ) {
 
-			throw new WC_API_Client_Exception( sprintf( 'Invalid JSON returned for %s.', $this->url ), $response_code, $response );
+			throw new WC_API_Client_HTTP_Exception( sprintf( 'Invalid JSON returned for %s.', $this->request->url ), $this->response->code, $this->request, $this->response );
 		}
 
 		// any non-200/201 response code indicates an error
-		if ( ! in_array( $response_code, array( '200', '201' ) ) ) {
+		if ( ! in_array( $this->response->code, array( '200', '201' ) ) ) {
 
 			// error message/code is nested sometimes
 			list( $error_message, $error_code ) = is_array( $parsed_response->errors ) ? array( $parsed_response->errors[0]->message, $parsed_response->errors[0]->code ) : array( $parsed_response->errors->message, $parsed_response->errors->code );
 
-			throw new WC_API_Client_Exception( sprintf( 'Error: %s [%s]', $error_message, $error_code ), $response_code, $response );
+			throw new WC_API_Client_HTTP_Exception( sprintf( 'Error: %s [%s]', $error_message, $error_code ), $this->response->code, $this->request, $this->response);
 		}
 
-		return $response;
+		return array(
+			'request'  => $this->request,
+			'response' => $this->response,
+		);
 	}
 
 
@@ -238,7 +265,7 @@ class WC_API_Client_HTTP_Request {
 
 		}
 
-		return $this->response_headers = $headers;
+		return $headers;
 	}
 
 }

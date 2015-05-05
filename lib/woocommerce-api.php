@@ -24,8 +24,9 @@ require_once( $dir . 'class-wc-api-client.php' );
 require_once( $dir . 'class-wc-api-client-authentication.php' );
 require_once( $dir . 'class-wc-api-client-http-request.php' );
 
-// errors
-require_once( $dir . 'class-wc-api-client-exception.php' );
+// exceptions
+require_once( $dir . '/exceptions/class-wc-api-client-exception.php' );
+require_once( $dir . '/exceptions/class-wc-api-client-http-exception.php' );
 
 // resources
 require_once( $dir . '/resources/class-wc-api-client-resource.php' );
