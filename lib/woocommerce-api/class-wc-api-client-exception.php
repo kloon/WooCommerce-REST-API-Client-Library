@@ -8,30 +8,32 @@
  */
 class WC_API_Client_Exception extends Exception {
 
+	/** @var array response array */
+	protected $http_response;
 
 	/**
 	 * Setup the exception
 	 *
 	 * @param string $message error message
 	 * @param int $code HTTP response code
-	 * @param null $raw_error raw error text
+	 * @param array|null $http_response response array
 	 */
-	public function __construct( $message, $code = 0, $raw_error = null ) {
+	public function __construct( $message, $code = 0, $http_response = null ) {
 
 		parent::__construct( $message, $code );
 
-		$this->raw_error = $raw_error;
+		$this->http_response = $http_response;
 	}
 
 	/**
-	 * Return the raw error text
+	 * Return the HTTP response array from the request
 	 *
 	 * @since 2.0
-	 * @return null
+	 * @return array
 	 */
-	public function get_raw_error() {
+	public function get_http_response() {
 
-		return $this->raw_error;
+		return $this->http_response;
 	}
 
 

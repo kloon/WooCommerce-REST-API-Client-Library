@@ -214,7 +214,7 @@ class WC_API_Client {
 
 		$response = $request->dispatch();
 
-		$data = json_decode( $response['body'], $this->return_as_array );
+		$parsed_response = json_decode( $response['body'], $this->return_as_array );
 
 		// add HTTP info to object
 		if ( $this->verbose_mode ) {
@@ -227,13 +227,13 @@ class WC_API_Client {
 			$http->duration = $response['duration'];
 
 			if ( $this->return_as_array ) {
-				$data['http'] = (array) $http;
+				$parsed_response['http'] = (array) $http;
 			} else {
-				$data->http = $http;
+				$parsed_response->http = $http;
 			}
 		}
 
-		return $data;
+		return $parsed_response;
 	}
 
 

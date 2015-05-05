@@ -147,30 +147,32 @@ class WC_API_Client_HTTP_Request {
 
 		curl_close( $this->ch );
 
-		// any non-200/201 response code indicates an error
-		if ( ! in_array( $response_code, array( '200', '201' ) ) ) {
+		$parsed_response = json_decode( $response_body );
 
-			$error = json_decode( $response_body );
-
-			// check for invalid JSON
-			if ( null === $error ) {
-
-				throw new WC_API_Client_Exception( sprintf( 'Invalid JSON returned for %s.', $this->url ), $response_code, $error );
-			}
-
-			// error message/code is nested sometimes
-			list( $error_message, $error_code ) = is_array( $error->errors ) ? array( $error->errors[0]->message, $error->errors[0]->code ) : array( $error->errors->message, $error->errors->code );
-
-			throw new WC_API_Client_Exception( sprintf( 'Error: %s [%s]', $error_message, $error_code ), $response_code, $response_body );
-		}
-
-		return array(
+		$response = array(
 			'url'      => $this->url,
 			'body'     => $response_body,
 			'code'     => $response_code,
 			'headers'  => $this->get_response_headers(),
 			'duration' => $duration,
 		);
+
+		// check for invalid JSON
+		if ( null === $parsed_response ) {
+
+			throw new WC_API_Client_Exception( sprintf( 'Invalid JSON returned for %s.', $this->url ), $response_code, $response );
+		}
+
+		// any non-200/201 response code indicates an error
+		if ( ! in_array( $response_code, array( '200', '201' ) ) ) {
+
+			// error message/code is nested sometimes
+			list( $error_message, $error_code ) = is_array( $parsed_response->errors ) ? array( $parsed_response->errors[0]->message, $parsed_response->errors[0]->code ) : array( $parsed_response->errors->message, $parsed_response->errors->code );
+
+			throw new WC_API_Client_Exception( sprintf( 'Error: %s [%s]', $error_message, $error_code ), $response_code, $response );
+		}
+
+		return $response;
 	}
 
 
