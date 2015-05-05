@@ -48,6 +48,8 @@ class WC_API_Client {
 	/** @var WC_API_Client_Order_Notes instance */
 	public $order_notes;
 
+	/** @var WC_API_Client_Webhooks instance */
+	public $webhooks;
 
 
 	/**
@@ -92,6 +94,7 @@ class WC_API_Client {
 			'WC_API_Client_Index'       => 'index',
 			'WC_API_Client_Orders'      => 'orders',
 			'WC_API_Client_Order_Notes' => 'order_notes',
+			'WC_API_Client_Webhooks'    => 'webhooks',
 		);
 
 		foreach ( $resources as $resource_class => $resource_method ) {
