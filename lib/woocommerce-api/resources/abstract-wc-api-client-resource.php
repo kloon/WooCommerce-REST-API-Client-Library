@@ -107,7 +107,7 @@ abstract class WC_API_Client_Resource {
 	 */
 	protected function get_request_data() {
 
-		return 'GET' == $this->request_method ? $this->request_params : $this->request_body;
+		return ( 'GET' === $this->request_method || 'DELETE' === $this->request_method ) ? $this->request_params : $this->request_body;
 	}
 
 

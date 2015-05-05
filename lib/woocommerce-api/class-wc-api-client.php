@@ -247,7 +247,7 @@ class WC_API_Client {
 	 * @return object|array object by default
 	 * @throws WC_API_Client_Exception HTTP or authentication errors
 	 */
-	public function make_api_call( $method, $path, $request_data) {
+	public function make_api_call( $method, $path, $request_data ) {
 
 		$args = array(
 			'method'          => $method,
