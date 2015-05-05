@@ -111,6 +111,7 @@ class WC_API_Client_Orders extends WC_API_Client_Resource {
 	 *
 	 * GET /orders/count
 	 *
+	 * @since 2.0
 	 * @param array $args acceptable order endpoint args, like `status`
 	 * @return array|object the count
 	 */
@@ -120,6 +121,25 @@ class WC_API_Client_Orders extends WC_API_Client_Resource {
 			'method' => 'GET',
 			'path'   => 'count',
 			'params' => $args,
+		) );
+
+		return $this->do_request();
+	}
+
+
+	/**
+	 * Get a list of valid order statuses
+	 *
+	 * GET /orders/statuses
+	 *
+	 * @since 2.0
+	 * @return array|object order statuses
+	 */
+	public function get_statuses() {
+
+		$this->set_request_args( array(
+			'method' => 'GET',
+			'path'   => 'statuses',
 		) );
 
 		return $this->do_request();
