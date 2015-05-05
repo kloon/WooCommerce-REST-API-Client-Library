@@ -9,11 +9,11 @@
 $dir = dirname( __FILE__ ) . '/woocommerce-api/';
 
 // required functions
-if ( ! function_exists( 'curl_init' ) ) {
+if ( ! extension_loaded( 'curl' ) ) {
 	throw new Exception( 'WooCommerce REST API client requires the cURL PHP extension.' );
 }
 
-if ( ! function_exists( 'json_decode' ) ) {
+if ( ! extension_loaded( 'json' ) ) {
 	throw new Exception( 'WooCommerce REST API client needs the JSON extension.' );
 }
 
