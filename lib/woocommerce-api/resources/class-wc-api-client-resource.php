@@ -10,6 +10,9 @@ abstract class WC_API_Client_Resource {
 	/** @var string resource endpoint */
 	protected $endpoint;
 
+	/** @var string JSON object namespace */
+	protected $object_namespace;
+
 	/** @var WC_API_Client class instance */
 	protected $client;
 
@@ -30,13 +33,15 @@ abstract class WC_API_Client_Resource {
 	 * Set the endpoint and client
 	 *
 	 * @since 2.0
-	 * @param string $endpoint
+	 * @param string $endpoint top-level endpoint, e.g. `orders`
+	 * @param string $object_namespace the JSON object namespace for this resource, e.g. `order`
 	 * @param WC_API_Client $client class instance
 	 */
-	public function __construct( $endpoint, $client ) {
+	public function __construct( $endpoint, $object_namespace, $client ) {
 
-		$this->endpoint = $endpoint;
-		$this->client = $client;
+		$this->endpoint         = $endpoint;
+		$this->object_namespace = $object_namespace;
+		$this->client           = $client;
 	}
 
 
@@ -61,6 +66,17 @@ abstract class WC_API_Client_Resource {
 		$this->request_params = isset( $args['params'] ) ? $args['params'] : null;
 		$this->request_body   = isset( $args['body'] ) ? $args['body'] : null;
 
+		// set the top-level JSON object namespace if not already set, this is mainly
+		// a convenience for client code so creating/updating resources doesn't need a
+		// nested array like array( 'order_note' => array( 'note' => 'foo' ) ) and can instead
+		// use array( 'note' => 'foo' ) ʘ‿ʘ
+		if ( $this->request_body && ! isset( $args['body'][ $this->object_namespace ] ) ) {
+
+			$this->request_body = array(
+				$this->object_namespace => $this->request_body,
+			);
+		}
+
 		// convert bool true to string 'true', required for DELETE endpoints
 		if ( isset( $this->request_params['force'] ) && $this->request_params['force'] ) {
 			$this->request_params['force'] = 'true';
@@ -78,7 +94,7 @@ abstract class WC_API_Client_Resource {
 	 */
 	protected function get_endpoint_path() {
 
-		return $this->endpoint . '/' . implode( '/', (array) $this->request_path );
+		return empty( $this->request_path ) ? $this->endpoint : $this->endpoint . '/' . implode( '/', (array) $this->request_path );
 	}
 
 

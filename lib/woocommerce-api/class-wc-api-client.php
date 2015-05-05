@@ -36,6 +36,10 @@ class WC_API_Client {
 
 	/** @var WC_API_Client_Orders instance */
 	public $orders;
+
+	/** @var WC_API_Client_Order_Notes instance */
+	public $order_notes;
+
 	/** API client version */
 	const VERSION = '2.0.0';
 
@@ -81,6 +85,7 @@ class WC_API_Client {
 		$resources = array(
 			//'WC_API_Client_Index' => 'index',
 			'WC_API_Client_Orders'         => 'orders',
+			'WC_API_Client_Order_Notes'    => 'order_notes',
 			//'WC_API_Order_Statuses' => 'order_statuses',
 			//'WC_API_Order_Notes'    => 'order_notes',
 			//'WC_API_Order_Refunds'  => 'order_refunds',

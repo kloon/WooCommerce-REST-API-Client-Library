@@ -15,7 +15,7 @@ class WC_API_Client_Orders extends WC_API_Client_Resource {
 	 */
 	public function __construct( $client ) {
 
-		parent::__construct( 'orders', $client );
+		parent::__construct( 'orders', 'order', $client );
 	}
 
 
@@ -143,7 +143,7 @@ class WC_API_Client_Orders extends WC_API_Client_Resource {
 		$this->set_request_args( array(
 			'method' => 'PUT',
 			'path'   => $id,
-			'body'   => array( 'order' => array( 'status' => $status ) ),
+			'body'   => array( 'status' => $status ),
 		) );
 
 		return $this->do_request();
