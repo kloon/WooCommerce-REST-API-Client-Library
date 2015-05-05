@@ -62,7 +62,7 @@ abstract class WC_API_Client_Resource {
 	protected function set_request_args( $args ) {
 
 		$this->request_method = $args['method'];
-		$this->request_path   = $args['path'];
+		$this->request_path   = isset( $args['path'] ) ? $args['path'] : null;
 		$this->request_params = isset( $args['params'] ) ? $args['params'] : null;
 		$this->request_body   = isset( $args['body'] ) ? $args['body'] : null;
 

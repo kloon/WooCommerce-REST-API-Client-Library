@@ -7,6 +7,9 @@
 class WC_API_Client {
 
 
+	/** API client version */
+	const VERSION = '2.0.0';
+
 	/** @var string store URL, e.g. http://www.woothemes.com */
 	public $store_url;
 
@@ -34,14 +37,17 @@ class WC_API_Client {
 	/** @var bool true to perform SSL peer verification */
 	public $ssl_verify = true;
 
+	/** Resources */
+
+	/** @var WC_API_Client_Index instance */
+	public $index;
+
 	/** @var WC_API_Client_Orders instance */
 	public $orders;
 
 	/** @var WC_API_Client_Order_Notes instance */
 	public $order_notes;
 
-	/** API client version */
-	const VERSION = '2.0.0';
 
 
 	/**
@@ -83,14 +89,9 @@ class WC_API_Client {
 	public function init_resources() {
 
 		$resources = array(
-			//'WC_API_Client_Index' => 'index',
-			'WC_API_Client_Orders'         => 'orders',
-			'WC_API_Client_Order_Notes'    => 'order_notes',
-			//'WC_API_Order_Statuses' => 'order_statuses',
-			//'WC_API_Order_Notes'    => 'order_notes',
-			//'WC_API_Order_Refunds'  => 'order_refunds',
-			//'WC_API_Products'       => 'products',
-			// ...etc
+			'WC_API_Client_Index'       => 'index',
+			'WC_API_Client_Orders'      => 'orders',
+			'WC_API_Client_Order_Notes' => 'order_notes',
 		);
 
 		foreach ( $resources as $resource_class => $resource_method ) {

@@ -20,7 +20,7 @@ class WC_API_Client_Order_Notes extends WC_API_Client_Resource {
 
 
 	/**
-	 * Get orders
+	 * Get order notes
 	 *
 	 * GET /orders/#{order_id}/notes
 	 * GET /orders/#{order_id}/notes/#{id}
