@@ -51,6 +51,9 @@ class WC_API_Client {
 	/** @var WC_API_Client_Resource_Webhooks instance */
 	public $webhooks;
 
+	/** @var WC_API_Client_Resource_Custom instance */
+	public $custom;
+
 
 	/**
 	 * Setup the client
@@ -95,6 +98,7 @@ class WC_API_Client {
 			'WC_API_Client_Resource_Orders'      => 'orders',
 			'WC_API_Client_Resource_Order_Notes' => 'order_notes',
 			'WC_API_Client_Resource_Webhooks'    => 'webhooks',
+			'WC_API_Client_Resource_Custom'      => 'custom',
 		);
 
 		foreach ( $resources as $resource_class => $resource_method ) {
