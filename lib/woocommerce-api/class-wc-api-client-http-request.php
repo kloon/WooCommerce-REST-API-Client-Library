@@ -187,8 +187,8 @@ class WC_API_Client_HTTP_Request {
 			throw new WC_API_Client_HTTP_Exception( sprintf( 'Invalid JSON returned for %s.', $this->request->url ), $this->response->code, $this->request, $this->response );
 		}
 
-		// any non-200/201 response code indicates an error
-		if ( ! in_array( $this->response->code, array( '200', '201' ) ) ) {
+		// any non-200/201/202 response code indicates an error
+		if ( ! in_array( $this->response->code, array( '200', '201', '202' ) ) ) {
 
 			// error message/code is nested sometimes
 			list( $error_message, $error_code ) = is_array( $parsed_response->errors ) ? array( $parsed_response->errors[0]->message, $parsed_response->errors[0]->code ) : array( $parsed_response->errors->message, $parsed_response->errors->code );
