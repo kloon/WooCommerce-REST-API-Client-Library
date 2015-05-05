@@ -1,111 +1,81 @@
-WooCommerce REST API Client Library
-===================================
+WooCommerce REST API PHP Client Library
+=======================================
 
 ## About
 
-A PHP wrapper for the WooCommerce REST API. Easily interact with the WooCommerce REST API using this wrapper class.
+A PHP wrapper for the WooCommerce REST API. Easily interact with the WooCommerce REST API using this library.
+
 Feedback and bug reports are appreciated.
 
 ## Requirements
 
 PHP 5.2.x
 cURL
-WooCommerce 2.1 at least on the store
+WooCommerce 2.2 at least on the store
 
 ## Getting started
-Generate API credentials ( Consumer Key & Consumer Secret ) on your profile page for the store you want to interact with.
 
-> A good place to start is to look at the example script included.
+Generate API credentials (Consumer Key & Consumer Secret) under WP Admin > Your Profile.
 
-### Initialize the class
+## Setup the library
+
 ```php
-<?php
-    require_once 'class-wc-api-client.php';
+require_once( 'lib/woocommerce-api.php' );
 
-    $consumer_key = 'ck_fcedaba8f0fcb0fb4ae4f1211a75da72'; // Add your own Consumer Key here
-	$consumer_secret = 'cs_9914968ae9adafd3741c818bf6d704c7'; // Add your own Consumer Secret here
-	$store_url = 'http://localhost/'; // Add the home URL to the store you want to connect to here
+$options = array(
+	'ssl_verify'      => false,
+);
 
-	// Initialize the class
-	$wc_api = new WC_API_Client( $consumer_key, $consumer_secret, $store_url );
-?>
+try {
+
+	$client = new WC_API_Client( 'http://your-store-url.com', $consumer_key, $consumer_secret, $options );
+	
+} catch ( WC_API_Client_Exception $e ) {
+
+	echo $e->getMessage() . PHP_EOL;
+	echo $e->getCode() . PHP_EOL;
+
+	if ( $e instanceof WC_API_Client_HTTP_Exception ) {
+
+		print_r( $e->get_request() );
+		print_r( $e->get_response() );
+	}
+}
 ```
 
-### Get the data using methods
-```php
-<?php
-	// Get all orders
-	$orders = $wc_api->get_orders();
-	print_r( $orders );
-?>
-```
+### Options
 
-**All methods return the data `json_decode()` by default so you can access the data.**
+* `verbose_mode` (default `false`) - set to `true` to add request/response information to the returned data. This is particularly useful for troubleshooting errors.
 
-## Available methods
+* `return_as_array` (default `false`) - all methods return data as a `stdClass` by default, but you can set this option to `true` to return data as an associative array instead.
 
-### Index method
-- `get_index()`
+* `validate_url` (default `false`) - set this to `true` to verify that the URL provided has a valid, parseable WC API index, and optionally force SSL when supported.
 
-### Order methods
-- `get_orders()`
-- `get_orders( $params = array( 'status' => 'completed' ) )`
-- `get_order( $order_id )`
-- `get_orders_count()`
-- `get_order_notes( $order_id )`
-- `update_order( $order_id, $data = array( 'status' => 'processing' ) )`
+* `timeout` (default `30`) - set this to control the HTTP timeout for requests.
 
-### Coupon methods
-- `get_coupons()`
-- `get_coupon( $coupon_id )`
-- `get_coupon_by_code( $coupon_code )`
-- `get_coupons_count()`
+* `ssl_verify` (default `true`) - set this to `false` if you don't want to perform SSL peer verification for every request.
 
 
-### Customer methods
-- `get_customers()`
-- `get_customers( $params = array( 'filter[created_at_min]' => '2013-12-01' ) )`
-- `get_customer( $customer_id )`
-- `get_customers_count()`
-- `get_customer_orders( $customer_id )`
+### Error handling
+Exceptions are thrown when errors are encountered, most will be instances of `WC_API_Client_HTTP_Exception` which has two additional methods, `get_request()` and `get_response()` -- these return the request and response objects to help with debugging.
 
-### Product methods
-- `get_products()`
-- `get_products( $params = array( 'filter[created_at_min]' => '2013-12-01' ) )`
-- `get_product( $product_id )`
-- `get_products_count()`
-- `get_product_reviews( $product_id )`
 
-### Report methods
-- `get_reports()`
-- `get_sales_report( $params = array( 'filter[start_date]' => '2013-12-01', 'filter[end_date]' => '2013-12-09' ) )`
-- `get_top_sellers_report( $params = array( 'filter[limit]' = '10' ) )`
+## Methods
 
-### Custom endpoints
-If you extended the WooCommerce API with your own endpoints you can use the following function to get access to that data
-- `make_custom_endpoint_call( $endpoint, $params = array(), $method = 'GET' )`
+### Index
 
-## Changelog
+* `$client->index->get()` - get the API index
 
-**version 0.3.1 - 2014-05-02**
+### Orders
 
-- Fix parameter normalization issue with WC 2.1.7+
+* `$client->orders->get()` - get a list of orders
+* `$client->orders->get( array( 'status' => 'completed' ) )` - get a list of completed orders
+* `$client->orders->get( $order_id )` - get a single order
 
-**version 0.3 - 2014-02-20**
-
-- Add HTTP error messages on failed cURL calls
-
-**version 0.2 - 2014-01-22**
-
-- Add support for filters/params to endpoint functions
-- Add new top sellers report endpoint function
-- Add function to call custom endpoints
-
-**version 0.1 - 2013-12-10**
-
-- Initial release
 
 ## Credit
 
-Copyright (c) 2013-2014 - [Gerhard Potgieter](http://gerhardpotgieter.com/)
+Copyright (c) 2013-2014 - [Gerhard Potgieter](http://gerhardpotgieter.com/), [Max Rice](http://maxrice.com) and other contributors
+
+## License
 Released under the [GPL3 license](http://www.gnu.org/licenses/gpl-3.0.html)
