@@ -30,7 +30,7 @@ require_once( $dir . '/exceptions/class-wc-api-client-http-exception.php' );
 
 // resources
 require_once( $dir . '/resources/abstract-wc-api-client-resource.php' );
-//require_once( $dir . '/resources/class-wc-api-client-resource-coupons.php' );
+require_once( $dir . '/resources/class-wc-api-client-resource-coupons.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-custom.php' );
 //require_once( $dir . '/resources/class-wc-api-client-resource-customers.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-index.php' );
