@@ -15,6 +15,9 @@ class WC_API_Client_HTTP_Request {
 	/** @var stdClass request data */
 	protected $request;
 
+	/** @var bool true to decode JSON as array */
+	protected $json_decode_as_array;
+
 	/** @var stdClass response data */
 	protected $response;
 
@@ -46,6 +49,9 @@ class WC_API_Client_HTTP_Request {
 
 		$this->request->params = array();
 		$this->request->data = $args['data'];
+
+		// JSON output format
+		$this->json_decode_as_array = ( 'array' === $args['options']['json_decode'] );
 
 		// optional cURL opts
 		$timeout = (int) $args['options']['timeout'];
@@ -179,7 +185,7 @@ class WC_API_Client_HTTP_Request {
 
 		curl_close( $this->ch );
 
-		$parsed_response = json_decode( $this->response->body );
+		$parsed_response = $this->get_parsed_response( $this->response->body );
 
 		// check for invalid JSON
 		if ( null === $parsed_response ) {
@@ -197,9 +203,32 @@ class WC_API_Client_HTTP_Request {
 		}
 
 		return array(
+			'parsed'   => $parsed_response,
 			'request'  => $this->request,
 			'response' => $this->response,
 		);
+	}
+
+
+	/**
+	 * JSON decode the response body after stripping any invalid leading or
+	 * trailing characters.
+	 *
+	 * Plugins (looking at you WP Super Cache) or themes
+	 * can add output to the returned JSON which breaks decoding.
+	 *
+	 * @since 2.0
+	 * @param string $raw_body raw response body
+	 * @return object|array JSON decoded response body
+	 */
+	protected function get_parsed_response( $raw_body ) {
+
+		$json_start = strpos( $raw_body, '{' );
+		$json_end = strrpos( $raw_body, '}' ) + 1; // inclusive
+
+		$json = substr( $raw_body, $json_start, ( $json_end - $json_start ) );
+
+		return json_decode( $json, $this->json_decode_as_array );
 	}
 
 

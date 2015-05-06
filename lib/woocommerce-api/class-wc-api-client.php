@@ -219,7 +219,11 @@ class WC_API_Client {
 			throw new WC_API_Client_Exception( sprintf( 'Please upgrade the WooCommerce version on %s to v2.2 or greater.', $this->api_url ) );
 		}
 
-		$index = json_decode( $index );
+		// strip invalid leading/trailing characters from JSON
+		$json_start = strpos( $index, '{' );
+		$json_end = strrpos( $index, '}' ) + 1; // inclusive
+
+		$index = json_decode( substr( $index, $json_start, ( $json_end - $json_start ) ) );
 
 		// check for invalid JSON, an error here usually means:
 		// 1) there's some garbage in the JSON output, WP Super Cache is notorious for adding an HTML comment to non-cached pages
@@ -256,8 +260,9 @@ class WC_API_Client {
 			'consumer_key'    => $this->consumer_key,
 			'consumer_secret' => $this->consumer_secret,
 			'options'         => array(
-				'timeout'    => $this->timeout,
-				'ssl_verify' => $this->ssl_verify,
+				'timeout'     => $this->timeout,
+				'ssl_verify'  => $this->ssl_verify,
+				'json_decode' => $this->return_as_array ? 'array' : 'object',
 			)
 		);
 
@@ -265,23 +270,22 @@ class WC_API_Client {
 
 		$result = $request->dispatch();
 
-		$parsed_response = json_decode( $result['response']->body, $this->return_as_array );
-
 		if ( $this->verbose_mode ) {
 
 			// add HTTP request/response info
 			if ( $this->return_as_array ) {
 
 				// hack to recursively convert object to assoc array ¯\_(ツ)_/¯
-				$parsed_response['http'] = json_decode( json_encode( $result ), true );
+				$result['parsed']['http'] = json_decode( json_encode( array( 'request' => $result['request'], 'response' => $result['response'] ) ), true );
 
 			} else {
 
-				$parsed_response->http = $result;
+				$result['parsed']->http->request = $result['request'];
+				$result['parsed']->http->response = $result['response'];
 			}
 		}
 
-		return $parsed_response;
+		return $result['parsed'];
 	}
 
 
