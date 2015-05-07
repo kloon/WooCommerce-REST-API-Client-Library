@@ -22,8 +22,8 @@ class WC_API_Client {
 	/** @var string API URL, e.g. http://www.woothemes.com/wc-api/v2 */
 	public $api_url;
 
-	/** @var bool is verbose mode enabled */
-	public $verbose_mode = false;
+	/** @var bool true if debug is enabled */
+	public $debug = false;
 
 	/** @var bool return the response data as an array, defaults to object */
 	public $return_as_array = false;
@@ -162,7 +162,7 @@ class WC_API_Client {
 	/**
 	 * Parse client options, current available options are:
 	 *
-	 * `verbose_mode` - true to include HTTP body, code, headers, and duration in response
+	 * `debug` - true to include cURL log, HTTP request object, and HTTP response object in result
 	 * `return_as_array` - true to return the response as an associative array instead of object
 	 * `validate_url` - true to validate the API URL is correct before making API calls
 	 *
@@ -177,7 +177,7 @@ class WC_API_Client {
 	public function parse_options( $options ) {
 
 		$valid_options = array(
-			'verbose_mode',
+			'debug',
 			'return_as_array',
 			'validate_url',
 			'timeout',
@@ -185,6 +185,11 @@ class WC_API_Client {
 		);
 
 		foreach ( (array) $options as $opt_key => $opt_value ) {
+
+			// backwards compat
+			if ( 'verbose_mode' === $opt_key ) {
+				$opt_key = 'debug';
+			}
 
 			if ( ! in_array( $opt_key, $valid_options ) ) {
 				continue;
@@ -263,29 +268,13 @@ class WC_API_Client {
 				'timeout'     => $this->timeout,
 				'ssl_verify'  => $this->ssl_verify,
 				'json_decode' => $this->return_as_array ? 'array' : 'object',
+				'debug'       => $this->debug,
 			)
 		);
 
 		$request = new WC_API_Client_HTTP_Request( $args );
 
-		$result = $request->dispatch();
-
-		if ( $this->verbose_mode ) {
-
-			// add HTTP request/response info
-			if ( $this->return_as_array ) {
-
-				// hack to recursively convert object to assoc array ¯\_(ツ)_/¯
-				$result['parsed']['http'] = json_decode( json_encode( array( 'request' => $result['request'], 'response' => $result['response'] ) ), true );
-
-			} else {
-
-				$result['parsed']->http->request = $result['request'];
-				$result['parsed']->http->response = $result['response'];
-			}
-		}
-
-		return $result['parsed'];
+		return $request->dispatch();
 	}
 
 

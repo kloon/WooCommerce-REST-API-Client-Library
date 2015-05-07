@@ -45,7 +45,7 @@ try {
 
 ### Options
 
-* `verbose_mode` (default `false`) - set to `true` to add request/response information to the returned data. This is particularly useful for troubleshooting errors.
+* `debug` (default `false`) - set to `true` to add request/response information to the returned data. This is particularly useful for troubleshooting errors.
 
 * `return_as_array` (default `false`) - all methods return data as a `stdClass` by default, but you can set this option to `true` to return data as an associative array instead.
 

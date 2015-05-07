@@ -3,7 +3,7 @@
 require_once( 'lib/woocommerce-api.php' );
 
 $options = array(
-	'verbose_mode'    => true,
+	'debug'           => true,
 	'return_as_array' => false,
 	'validate_url'    => false,
 	'timeout'         => 30,

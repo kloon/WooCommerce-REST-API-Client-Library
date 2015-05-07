@@ -18,6 +18,9 @@ class WC_API_Client_HTTP_Request {
 	/** @var bool true to decode JSON as array */
 	protected $json_decode_as_array;
 
+	/** @var bool true to include cURL log, HTTP request/response object in result */
+	protected $debug;
+
 	/** @var stdClass response data */
 	protected $response;
 
@@ -52,6 +55,9 @@ class WC_API_Client_HTTP_Request {
 
 		// JSON output format
 		$this->json_decode_as_array = ( 'array' === $args['options']['json_decode'] );
+
+		// debug mode?
+		$this->debug = (bool) $args['options']['debug'];
 
 		// optional cURL opts
 		$timeout = (int) $args['options']['timeout'];
@@ -142,24 +148,7 @@ class WC_API_Client_HTTP_Request {
 	 * Send the request
 	 *
 	 * @since 2.0
-	 * @return array in format:
-	 * {
-	 *   'request' => stdClass(
-	 *     'url' => request URL
-	 *     'method' => request method
-	 *     'body' => JSON encoded request body entity
-	 *     'headers' => array of request headers
-	 *     'duration' => request duration, in seconds
-	 *     'params' => optional raw params
-	 *     'data' => optional raw request data
-	 *     'duration' =>
-	 *    )
-	 *   'response' => stdClass(
-	 *     'body' => raw response body
-	 *     'code' => HTTP response code
-	 *     'headers' => HTTP response headers in assoc array
-	 *   )
-	 * }
+	 * @return object|array result
 	 * @throws WC_API_Client_HTTP_Exception invalid decoded JSON or any non-HTTP 200/201 response
 	 */
 	public function dispatch() {
@@ -202,11 +191,7 @@ class WC_API_Client_HTTP_Request {
 			throw new WC_API_Client_HTTP_Exception( sprintf( 'Error: %s [%s]', $error_message, $error_code ), $this->response->code, $this->request, $this->response);
 		}
 
-		return array(
-			'parsed'   => $parsed_response,
-			'request'  => $this->request,
-			'response' => $this->response,
-		);
+		return $this->build_result( $parsed_response );
 	}
 
 
@@ -229,6 +214,56 @@ class WC_API_Client_HTTP_Request {
 		$json = substr( $raw_body, $json_start, ( $json_end - $json_start ) );
 
 		return json_decode( $json, $this->json_decode_as_array );
+	}
+
+
+	/**
+	 * Build the result object/array
+	 *
+	 * @since 2.0.0
+	 * @param object|array JSON decoded result
+	 * @return object|array in format:
+	 * {
+	 *  <result data>
+	 *  'http' =>
+	 *   'request' => stdClass(
+	 *     'url' => request URL
+	 *     'method' => request method
+	 *     'body' => JSON encoded request body entity
+	 *     'headers' => array of request headers
+	 *     'duration' => request duration, in seconds
+	 *     'params' => optional raw params
+	 *     'data' => optional raw request data
+	 *     'duration' =>
+	 *    )
+	 *   'response' => stdClass(
+	 *     'body' => raw response body
+	 *     'code' => HTTP response code
+	 *     'headers' => HTTP response headers in assoc array
+	 *   )
+	 * }
+	 */
+	protected function build_result( $parsed_response ) {
+
+		// add cURL log, HTTP request/response object
+		if ( $this->debug ) {
+
+			if ( $this->json_decode_as_array ) {
+
+				$parsed_response['http'] = array(
+					'request'  => json_decode( json_encode( $this->request ), true ),
+					'response' => json_decode( json_encode( $this->response ), true ),
+				);
+
+			} else {
+
+				$parsed_response->http = new stdClass();
+				$parsed_response->http->request = $this->request;
+				$parsed_response->http->response = $this->response;
+			}
+		}
+
+		return $parsed_response;
 	}
 
 
