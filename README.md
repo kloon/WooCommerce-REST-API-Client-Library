@@ -69,7 +69,7 @@ Exceptions are thrown when errors are encountered, most will be instances of `WC
 ### Orders
 
 * `$client->orders->get()` - get a list of orders
-* `$client->orders->get( array( 'status' => 'completed' ) )` - get a list of completed orders
+* `$client->orders->get( null, array( 'status' => 'completed' ) )` - get a list of completed orders
 * `$client->orders->get( $order_id )` - get a single order
 
 
