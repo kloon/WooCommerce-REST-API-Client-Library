@@ -77,7 +77,15 @@ class WC_API_Client_Authentication {
 	public function generate_oauth_signature( $params, $http_method ) {
 
 		$base_request_uri = rawurlencode( $this->url );
-
+		
+		if ( isset( $params['filter'] ) ) {
+			$filters = $params['filter'];
+			unset( $params['filter'] );
+			foreach ( $filters as $filter => $filter_value ) {
+				$params['filter[' . $filter . ']'] = $filter_value;
+			}
+		}
+		
 		// normalize parameter key/values and sort them
 		$params = $this->normalize_parameters( $params );
 		uksort( $params, 'strcmp' );
