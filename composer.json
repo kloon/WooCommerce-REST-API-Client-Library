@@ -12,7 +12,8 @@
         }
     ],
     "autoload": {
-        "files": ["lib/woocommerce-api.php"]
+        "files": ["lib/woocommerce-api.php"],
+        "classmap": ["lib/woocommerce-api"]
     },
     "minimum-stability": "stable",
     "require": {}
