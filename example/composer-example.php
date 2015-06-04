@@ -1,4 +1,4 @@
-<?php
+<?php // Root namespace for now. See Issue #85
 
 use WC_API_Client;
 use WC_API_Client_Exception;
