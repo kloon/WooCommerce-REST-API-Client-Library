@@ -186,7 +186,26 @@ class WC_API_Client_HTTP_Request {
 		if ( ! in_array( $this->response->code, array( '200', '201', '202' ) ) ) {
 
 			// error message/code is nested sometimes
-			list( $error_message, $error_code ) = is_array( $parsed_response->errors ) ? array( $parsed_response->errors[0]->message, $parsed_response->errors[0]->code ) : array( $parsed_response->errors->message, $parsed_response->errors->code );
+			if ( $this->json_decode_as_array ) {
+
+				list( $error_message, $error_code ) = is_array( $parsed_response['errors'] ) ? array(
+					$parsed_response['errors'][0]['message'],
+					$parsed_response['errors'][0]['code']
+				) : array(
+					$parsed_response['errors']['message'],
+					$parsed_response['errors']['code']
+				);
+
+			} else {
+
+				list( $error_message, $error_code ) = is_array( $parsed_response->errors ) ? array(
+					$parsed_response->errors[0]->message,
+					$parsed_response->errors[0]->code
+				) : array(
+					$parsed_response->errors->message,
+					$parsed_response->errors->code
+				);
+			}
 
 			throw new WC_API_Client_HTTP_Exception( sprintf( 'Error: %s [%s]', $error_message, $error_code ), $this->response->code, $this->request, $this->response);
 		}
