@@ -8,15 +8,6 @@
 
 $dir = dirname( __FILE__ ) . '/woocommerce-api/';
 
-// required functions
-if ( ! extension_loaded( 'curl' ) ) {
-	throw new Exception( 'WooCommerce REST API client requires the cURL PHP extension.' );
-}
-
-if ( ! extension_loaded( 'json' ) ) {
-	throw new Exception( 'WooCommerce REST API client needs the JSON extension.' );
-}
-
 // base class
 require_once( $dir . 'class-wc-api-client.php' );
 
