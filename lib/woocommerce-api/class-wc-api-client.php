@@ -81,6 +81,15 @@ class WC_API_Client {
 	 */
 	public function __construct( $store_url, $consumer_key, $consumer_secret, $options = array() ) {
 
+		// required functions
+		if ( ! extension_loaded( 'curl' ) ) {
+			throw new Exception( 'WooCommerce REST API client requires the cURL PHP extension.' );
+		}
+
+		if ( ! extension_loaded( 'json' ) ) {
+			throw new Exception( 'WooCommerce REST API client needs the JSON extension.' );
+		}
+
 		// set required info
 		$this->store_url = $store_url;
 		$this->consumer_key = $consumer_key;

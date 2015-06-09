@@ -11,6 +11,9 @@
             "name": "Gerhard Potgieter"
         }
     ],
+    "autoload": {
+        "classmap": ["lib/woocommerce-api"]
+    },
     "minimum-stability": "stable",
     "require": {}
 }
