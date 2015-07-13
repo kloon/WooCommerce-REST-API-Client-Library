@@ -8,7 +8,7 @@ class WC_API_Client {
 
 
 	/** API client version */
-	const VERSION = '2.0.0';
+	const VERSION = '2.0.1';
 
 	/** @var string store URL, e.g. http://www.woothemes.com */
 	public $store_url;

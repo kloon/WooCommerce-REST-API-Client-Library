@@ -1,5 +1,8 @@
 ## Changelog
 
+**version 2.0.1 - 2015-07-13**
+- Fix composer configuration
+
 **version 2.0.0 - 2015-05-05**
 - Add support for v2 API (v1 is no longer supported)
 - Greatly improved error handling and logging
