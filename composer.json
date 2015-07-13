@@ -15,5 +15,9 @@
         "classmap": ["lib/woocommerce-api"]
     },
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "php": ">= 5.2.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    }
 }
