@@ -65,9 +65,9 @@ class WC_API_Client_HTTP_Request {
 
 		$this->ch = curl_init();
 
-        if($args['options']['httpauth_user'] !== null) {
-            curl_setopt($this->ch, CURLOPT_USERPWD, $args['options']['httpauth_user'] . ":" . $args['options']['httpauth_pass']);
-        }
+		if($args['options']['httpauth_username'] !== null) {
+			curl_setopt($this->ch, CURLOPT_USERPWD, $args['options']['httpauth_username'] . ":" . $args['options']['httpauth_password']);
+		}
 		
 		// default cURL opts
 		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, $ssl_verify );
