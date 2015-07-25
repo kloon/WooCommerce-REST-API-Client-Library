@@ -37,6 +37,12 @@ class WC_API_Client {
 	/** @var bool true to perform SSL peer verification */
 	public $ssl_verify = true;
 
+	/** @var null|string if set, used for HTTP BASIC AUTH */
+	public $httpauth_username = null;
+
+	/** @var null|string if set, used for HTTP BASIC AUTH */
+	public $httpauth_password = null;
+	
 	/** Resources */
 
 	/** @var WC_API_Client_Resource_Coupons instance */
@@ -191,6 +197,8 @@ class WC_API_Client {
 			'validate_url',
 			'timeout',
 			'ssl_verify',
+			'httpauth_username',
+			'httpauth_password',
 		);
 
 		foreach ( (array) $options as $opt_key => $opt_value ) {
@@ -218,7 +226,17 @@ class WC_API_Client {
 	 */
 	public function validate_api_url() {
 
-		$index = @file_get_contents( $this->api_url );
+		if($this->httpauth_username !== null) {
+			$context = stream_context_create(array(
+				'http' => array(
+					'header'  => "Authorization: Basic " . base64_encode($this->httpauth_username.':'.$this->httpauth_password)
+				)
+			));
+
+            $index = @file_get_contents( $this->api_url, false, $context);
+        } else {
+            $index = @file_get_contents( $this->api_url);
+        }
 
 		// check for HTTP 404 response (file_get_contents() returns false when encountering 404)
 		// this usually means:
@@ -278,6 +296,8 @@ class WC_API_Client {
 				'ssl_verify'  => $this->ssl_verify,
 				'json_decode' => $this->return_as_array ? 'array' : 'object',
 				'debug'       => $this->debug,
+				'httpauth_username' => $this->httpauth_username,
+				'httpauth_password' => $this->httpauth_password,
 			)
 		);
 
