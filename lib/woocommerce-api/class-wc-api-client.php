@@ -197,8 +197,8 @@ class WC_API_Client {
 			'validate_url',
 			'timeout',
 			'ssl_verify',
-            'httpauth_user',
-            'httpauth_pass',
+			'httpauth_user',
+			'httpauth_pass',
 		);
 
 		foreach ( (array) $options as $opt_key => $opt_value ) {
@@ -226,12 +226,12 @@ class WC_API_Client {
 	 */
 	public function validate_api_url() {
 
-        if($this->httpauth_user !== null) {
-            $context = stream_context_create(array(
-                'http' => array(
-                    'header'  => "Authorization: Basic " . base64_encode($this->httpauth_user.':'.$this->httpauth_pass)
-                )
-            ));
+		if($this->httpauth_user !== null) {
+			$context = stream_context_create(array(
+				'http' => array(
+					'header'  => "Authorization: Basic " . base64_encode($this->httpauth_user.':'.$this->httpauth_pass)
+				)
+			));
 
             $index = @file_get_contents( $this->api_url, false, $context);
         } else {
@@ -296,8 +296,8 @@ class WC_API_Client {
 				'ssl_verify'  => $this->ssl_verify,
 				'json_decode' => $this->return_as_array ? 'array' : 'object',
 				'debug'       => $this->debug,
-                'httpauth_user' => $this->httpauth_user,
-                'httpauth_pass' => $this->httpauth_pass,
+				'httpauth_user' => $this->httpauth_user,
+				'httpauth_pass' => $this->httpauth_pass,
 			)
 		);
 
