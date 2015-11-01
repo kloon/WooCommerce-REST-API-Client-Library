@@ -35,7 +35,7 @@ class WC_API_Client {
 	public $timeout = 30;
 
 	/** @var bool true to perform SSL peer verification */
-	public $ssl_verify = true;
+	public $ssl_verify = 2;
 
 	/** Resources */
 

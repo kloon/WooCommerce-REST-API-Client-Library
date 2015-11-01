@@ -61,7 +61,8 @@ class WC_API_Client_HTTP_Request {
 
 		// optional cURL opts
 		$timeout = (int) $args['options']['timeout'];
-		$ssl_verify = (bool) $args['options']['ssl_verify'];
+		// 0, 1 or 2. Value 1 is deprecated.
+		$ssl_verify = (int) $args['options']['ssl_verify'];
 
 		$this->ch = curl_init();
 
