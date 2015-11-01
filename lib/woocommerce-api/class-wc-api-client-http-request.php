@@ -61,14 +61,14 @@ class WC_API_Client_HTTP_Request {
 
 		// optional cURL opts
 		$timeout = (int) $args['options']['timeout'];
-		// 0, 1 or 2. Value 1 is deprecated.
-		$ssl_verify = (int) $args['options']['ssl_verify'];
+		$ssl_verify = (bool) $args['options']['ssl_verify'];
 
 		$this->ch = curl_init();
 
 		// default cURL opts
 		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, $ssl_verify );
-		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, $ssl_verify );
+		// 0, 1 or 2. Value 1 is deprecated.
+		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, $ssl_verify ? 0 : 2 );
 		curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, $timeout );
 		curl_setopt( $this->ch, CURLOPT_TIMEOUT, (int) $timeout );
 		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
