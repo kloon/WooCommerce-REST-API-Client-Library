@@ -8,6 +8,7 @@ $options = array(
 	'validate_url'    => false,
 	'timeout'         => 30,
 	'ssl_verify'      => false,
+	'fix_method'      => false,
 );
 
 try {
