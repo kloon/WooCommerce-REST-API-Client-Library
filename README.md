@@ -24,6 +24,9 @@ require_once( 'lib/woocommerce-api.php' );
 
 $options = array(
 	'ssl_verify'      => false,
+	// If your server will only accept GET and POST, then try this fix
+	// to map PUT and DELETE to POST.
+	'fix_method'      => true,
 );
 
 try {
