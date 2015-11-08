@@ -8,7 +8,7 @@ class WC_API_Client {
 
 
 	/** API client version */
-	const VERSION = '2.0.1';
+	const VERSION = '3.0.0';
 
 	/** @var string store URL, e.g. http://www.woothemes.com */
 	public $store_url;
@@ -68,6 +68,9 @@ class WC_API_Client {
 
 	/** @var WC_API_Client_Resource_Webhooks instance */
 	public $webhooks;
+	
+	/** @var WC_API_Client_Resource_Bulk instance */
+	public $bulk;
 
 
 	/**
@@ -118,6 +121,7 @@ class WC_API_Client {
 	public function init_resources() {
 
 		$resources = array(
+		    'WC_API_Client_Resource_Bulk'          => 'bulk',
 			'WC_API_Client_Resource_Coupons'       => 'coupons',
 			'WC_API_Client_Resource_Custom'        => 'custom',
 			'WC_API_Client_Resource_Customers'     => 'customers',
@@ -161,7 +165,7 @@ class WC_API_Client {
 		$path = isset( $url['path'] ) ? rtrim( $url['path'], '/' ) : '';
 
 		// add WC API path
-		$path .= '/wc-api/v2/';
+		$path .= '/wc-api/v3/';
 
 		// build URL
 		$this->api_url = "{$scheme}://{$host}{$path}";
@@ -280,7 +284,6 @@ class WC_API_Client {
 				'debug'       => $this->debug,
 			)
 		);
-
 		$request = new WC_API_Client_HTTP_Request( $args );
 
 		return $request->dispatch();

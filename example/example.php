@@ -14,6 +14,9 @@ try {
 
 	$client = new WC_API_Client( 'http://your-store-url.com', 'ck_enter_your_consumer_key', 'cs_enter_your_consumer_secret', $options );
 
+	// bulk
+	//print_r( $client->bulk->send( $products_array ) );
+
 	// coupons
 	//print_r( $client->coupons->get() );
 	//print_r( $client->coupons->get( $coupon_id ) );
