@@ -67,8 +67,9 @@ class WC_API_Client_HTTP_Request {
 
 		// default cURL opts
 		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, $ssl_verify );
-		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, $ssl_verify );
-		curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+		// 0, 1 or 2. Value 1 is deprecated.
+		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, $ssl_verify ? 0 : 2 );
+		curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, (int) $timeout );
 		curl_setopt( $this->ch, CURLOPT_TIMEOUT, (int) $timeout );
 		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
 
@@ -78,8 +79,18 @@ class WC_API_Client_HTTP_Request {
 		// save response headers
 		curl_setopt( $this->ch, CURLOPT_HEADERFUNCTION, array( $this, 'curl_stream_headers' ) );
 
+		// start with the required REST method
+		$method = $this->request->method;
+
+		// if we want to fix the method to GET and POST, then move the REST method
+		// to the _method parameter and do a POST instead.
+		if ( $args['fix_method'] && $method != 'GET' && $method != 'POST' ) {
+			$this->request->params = array_merge( $this->request->params, array( '_method' => $method ) );
+			$method = 'POST';
+		}
+
 		// set request method and data
-		switch ( $this->request->method ) {
+		switch ( $method ) {
 
 			case 'GET':
 				$this->request->body = null;
@@ -178,7 +189,6 @@ class WC_API_Client_HTTP_Request {
 
 		// check for invalid JSON
 		if ( null === $parsed_response ) {
-
 			throw new WC_API_Client_HTTP_Exception( sprintf( 'Invalid JSON returned for %s.', $this->request->url ), $this->response->code, $this->request, $this->response );
 		}
 

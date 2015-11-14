@@ -37,6 +37,9 @@ class WC_API_Client {
 	/** @var bool true to perform SSL peer verification */
 	public $ssl_verify = true;
 
+	/** @var bool true to replace PUT and DELETE methods with a POST */
+	public $fix_method = false;
+
 	/** Resources */
 
 	/** @var WC_API_Client_Resource_Coupons instance */
@@ -191,6 +194,7 @@ class WC_API_Client {
 			'validate_url',
 			'timeout',
 			'ssl_verify',
+			'fix_method',
 		);
 
 		foreach ( (array) $options as $opt_key => $opt_value ) {
@@ -206,6 +210,7 @@ class WC_API_Client {
 
 			$this->$opt_key = $opt_value;
 		}
+
 	}
 
 
@@ -269,6 +274,7 @@ class WC_API_Client {
 
 		$args = array(
 			'method'          => $method,
+			'fix_method'      => $this->fix_method,
 			'url'             => $this->api_url . $path,
 			'data'            => $request_data,
 			'consumer_key'    => $this->consumer_key,
