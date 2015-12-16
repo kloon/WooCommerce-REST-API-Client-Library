@@ -191,6 +191,25 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 
 		return $this->do_request();
 	}
+	
+	/**
+	 * Create a new category
+	 *
+	 * POST /products/categories
+	 *
+	 * @since 3.1
+	 * @param array with fields of a single category
+	 * @return array|object product category! (NO)
+	 */
+	public function create_category( $args = array() ) {
+		$this->set_request_args( array(
+			'method' => 'POST',
+			'path'   => 'categories',
+			'body' => $args,
+		) );
+
+		return $this->do_request();
+	}
 
 
 	/** Convenience methods - these do not map directly to an endpoint ********/

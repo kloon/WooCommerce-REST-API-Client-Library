@@ -77,6 +77,7 @@ try {
 	//print_r( $client->products->get_count( array( 'type' => 'simple' ) ) );
 	//print_r( $client->products->get_categories() );
 	//print_r( $client->products->get_categories( $category_id ) );
+	//print_r( $client->products->create_categroy( array( 'product_category' => array( 'name' => 'Test Category' ) ) ) );
 
 	// reports
 	//print_r( $client->reports->get() );

@@ -2,7 +2,7 @@
 /**
  * WooCommerce API Client Class
  *
- * @version 3.0.0
+ * @version 3.1.0
  * @license GPL 3 or later http://www.gnu.org/licenses/gpl.html
  */
 

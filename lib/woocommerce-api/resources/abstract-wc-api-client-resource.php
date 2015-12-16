@@ -60,7 +60,6 @@ abstract class WC_API_Client_Resource {
 	 * @param array $args
 	 */
 	protected function set_request_args( $args ) {
-
 		$this->request_method = $args['method'];
 		$this->request_path   = isset( $args['path'] ) ? $args['path'] : null;
 		$this->request_params = isset( $args['params'] ) ? $args['params'] : null;
@@ -70,7 +69,8 @@ abstract class WC_API_Client_Resource {
 		// a convenience for client code so creating/updating resources doesn't need a
 		// nested array like array( 'order_note' => array( 'note' => 'foo' ) ) and can instead
 		// use array( 'note' => 'foo' ) ʘ‿ʘ
-		if ( $this->request_body && ! isset( $args['body'][ $this->object_namespace ] ) ) {
+		// NOTE: not working for create_category()
+		if ( $this->request_body && ( ! isset( $args['body'][ $this->object_namespace ] )  && ! isset( $args['body']['product_category'] ) ) ) {
 
 			$this->request_body = array(
 				$this->object_namespace => $this->request_body,
@@ -118,7 +118,6 @@ abstract class WC_API_Client_Resource {
 	 * @return array|object
 	 */
 	protected function do_request() {
-
 		return $this->client->make_api_call( $this->request_method, $this->get_endpoint_path(), $this->get_request_data() );
 	}
 
