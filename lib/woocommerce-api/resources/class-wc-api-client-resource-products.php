@@ -204,7 +204,7 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 	 * @param array $args acceptable product categories endpoint args, currently only `fields`
 	 * @return array|object product categories!
 	 */
-	public function get_categories( $id = null, $args = array() ) {
+	public function get_product_orders( $id = null, $args = array() ) {
 
 		$this->set_request_args( array(
 			'method' => 'GET',
