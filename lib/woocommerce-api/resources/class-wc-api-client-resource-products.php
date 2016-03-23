@@ -58,7 +58,7 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 
 		$this->set_request_args( array(
 			'method' => 'GET',
-			'params' => array_merge( array( "filter[$sku]" ), $args )
+			'params' => array_merge( array( "filter[sku]" => $sku ), $args )
 		) );
 
 		return $this->do_request();
