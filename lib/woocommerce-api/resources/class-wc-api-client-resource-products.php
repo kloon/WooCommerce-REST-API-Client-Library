@@ -45,7 +45,7 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 	/**
 	 * Get product by SKU
 	 *
-	 * GET /products/sku/{sku}
+	 * GET /products/?filter[{sku}]
 	 *
 	 * Note this will throw an exception if no products are found (404 not found)
 	 *
@@ -58,8 +58,7 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 
 		$this->set_request_args( array(
 			'method' => 'GET',
-			'path'   => array( 'sku', urlencode( $sku ) ),
-			'params' => $args,
+			'params' => array_merge( array( filter[sku] ), $args )
 		) );
 
 		return $this->do_request();
