@@ -161,7 +161,7 @@ class WC_API_Client {
 		$path = isset( $url['path'] ) ? rtrim( $url['path'], '/' ) : '';
 
 		// add WC API path
-		$path .= '/wc-api/v2/';
+		$path .= '/wc-api/v3/';
 
 		// build URL
 		$this->api_url = "{$scheme}://{$host}{$path}";
