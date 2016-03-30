@@ -45,11 +45,11 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 	/**
 	 * Get product by SKU
 	 *
-	 * GET /products/sku/{sku}
+	 * GET /products/?filter[{sku}]
 	 *
 	 * Note this will throw an exception if no products are found (404 not found)
 	 *
-	 * @since 2.0
+	 * @since 3.0
 	 * @param string $sku product SKU
 	 * @param array $args acceptable product SKU lookup endpoint args, currently only `fields`
 	 * @return array|object product!
@@ -58,8 +58,7 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 
 		$this->set_request_args( array(
 			'method' => 'GET',
-			'path'   => array( 'sku', urlencode( $sku ) ),
-			'params' => $args,
+			'params' => array_merge( array( "filter[sku]" => $sku ), $args )
 		) );
 
 		return $this->do_request();
@@ -189,6 +188,27 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 		$this->set_request_args( array(
 			'method' => 'GET',
 			'path'   => array( 'categories', $id ),
+			'params' => $args,
+		) );
+
+		return $this->do_request();
+	}
+
+	/**
+	 *  Retrieve all product orders.
+	 *
+	 * GET /products/{#id}/orders
+	 *
+	 * @since 3.0
+	 * @param int $id category ID or null to get all product categories
+	 * @param array $args acceptable product categories endpoint args, currently only `fields`
+	 * @return array|object product categories!
+	 */
+	public function get_product_orders( $id = null, $args = array() ) {
+
+		$this->set_request_args( array(
+			'method' => 'GET',
+			'path'   => array( $id, 'orders' ),
 			'params' => $args,
 		) );
 
