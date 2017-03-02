@@ -14,6 +14,9 @@ try {
 
 	$client = new WC_API_Client( 'http://your-store-url.com', 'ck_enter_your_consumer_key', 'cs_enter_your_consumer_secret', $options );
 
+	// bulk
+	//print_r( $client->bulk->send( $products_array ) );
+
 	// coupons
 	//print_r( $client->coupons->get() );
 	//print_r( $client->coupons->get( $coupon_id ) );
@@ -74,6 +77,7 @@ try {
 	//print_r( $client->products->get_count( array( 'type' => 'simple' ) ) );
 	//print_r( $client->products->get_categories() );
 	//print_r( $client->products->get_categories( $category_id ) );
+	//print_r( $client->products->create_categroy( array( 'product_category' => array( 'name' => 'Test Category' ) ) ) );
 
 	// reports
 	//print_r( $client->reports->get() );

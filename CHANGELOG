@@ -1,5 +1,11 @@
 ## Changelog
 
+**version 3.0 - 2015-08-11**
+- Fix v3 authentication
+- Implemented bulk
+
+-- mikylucky's fork start
+
 **version 2.0.1 - 2015-07-13**
 - Fix composer configuration
 

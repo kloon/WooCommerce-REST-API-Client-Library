@@ -2,7 +2,7 @@
 /**
  * WooCommerce API Client Class
  *
- * @version 2.0.0
+ * @version 3.1.0
  * @license GPL 3 or later http://www.gnu.org/licenses/gpl.html
  */
 
@@ -21,6 +21,7 @@ require_once( $dir . '/exceptions/class-wc-api-client-http-exception.php' );
 
 // resources
 require_once( $dir . '/resources/abstract-wc-api-client-resource.php' );
+require_once( $dir . '/resources/class-wc-api-client-resource-bulk.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-coupons.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-custom.php' );
 require_once( $dir . '/resources/class-wc-api-client-resource-customers.php' );

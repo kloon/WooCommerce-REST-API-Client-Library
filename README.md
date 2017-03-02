@@ -7,6 +7,8 @@ A PHP wrapper for the WooCommerce REST API. Easily interact with the WooCommerce
 
 Feedback and bug reports are appreciated.
 
+NOTE: This is a fork of kloon's repository adapted to work with v3 WooCommerce API and include the bulk product update/creation
+
 ## Requirements
 
 PHP 5.2.x
@@ -71,6 +73,10 @@ Exceptions are thrown when errors are encountered, most will be instances of `WC
 * `$client->orders->get()` - get a list of orders
 * `$client->orders->get( null, array( 'status' => 'completed' ) )` - get a list of completed orders
 * `$client->orders->get( $order_id )` - get a single order
+
+## Bulk edit/create
+
+* `$client->bulk->send( $products_array )` - bulk edit/create maximum 100 products each call. Be sure to put the product ID in the array if you want to update that product. Missing ID will create a new product
 
 
 ## Credit

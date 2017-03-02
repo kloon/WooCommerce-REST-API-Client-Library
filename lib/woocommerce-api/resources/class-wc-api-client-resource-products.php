@@ -45,21 +45,18 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 	/**
 	 * Get product by SKU
 	 *
-	 * GET /products/sku/{sku}
+	 * GET /products?filter[sku]=$sku
 	 *
-	 * Note this will throw an exception if no products are found (404 not found)
-	 *
-	 * @since 2.0
+	 * @since 3.0
 	 * @param string $sku product SKU
 	 * @param array $args acceptable product SKU lookup endpoint args, currently only `fields`
 	 * @return array|object product!
 	 */
-	public function get_by_sku( $sku, $args = array() ) {
+	public function get_by_sku( $sku ) {
 
 		$this->set_request_args( array(
 			'method' => 'GET',
-			'path'   => array( 'sku', urlencode( $sku ) ),
-			'params' => $args,
+			'params' => array( "filter[sku]" => $sku )
 		) );
 
 		return $this->do_request();
@@ -194,6 +191,25 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 
 		return $this->do_request();
 	}
+	
+	/**
+	 * Create a new category
+	 *
+	 * POST /products/categories
+	 *
+	 * @since 3.1
+	 * @param array with fields of a single category
+	 * @return array|object product category! (NO)
+	 */
+	public function create_category( $args = array() ) {
+		$this->set_request_args( array(
+			'method' => 'POST',
+			'path'   => 'categories',
+			'body' => $args,
+		) );
+
+		return $this->do_request();
+	}
 
 
 	/** Convenience methods - these do not map directly to an endpoint ********/
@@ -218,6 +234,5 @@ class WC_API_Client_Resource_Products extends WC_API_Client_Resource {
 
 		return $this->do_request();
 	}
-
 
 }
